@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
+import { thunk } from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
 import { noteCreateReducer, noteDeleteReducer, noteListReducer, noteUpdateReducer } from "./reducers/noteReducers";
@@ -19,11 +19,11 @@ const rootReducer = combineReducers({
 
 });
 
-const userInfoFromStorage= localStorage.getItem('userInfo')?JSON.parse(localStorage.getItem('userInfo')):null
+const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
 
 const initialState = {
   // Fetch user state from local storage (whenever user comes back, fetch user state from local storage)
-  userLogin: { userInfo:userInfoFromStorage },
+  userLogin: { userInfo: userInfoFromStorage },
 };
 
 const store = configureStore({
