@@ -1,7 +1,7 @@
 import { Container, Form, FormControl, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout } from "../../actions/userActions"; 
+import { logout } from "../../actions/userActions";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Header = () => {
     <Navbar bg="primary" expand="lg" variant="dark">
       <Container>
         <Navbar.Brand as={Link} to="/">
-          Lernify
+          Learnify
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
