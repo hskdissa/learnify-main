@@ -38,7 +38,8 @@ const Header = () => {
               Dashboard
             </Nav.Link>
 
-            <NavDropdown title="Keshika Dissanayaka" id="basic-nav-dropdown">
+            {/* Changed title to be Variable depending on the user thats logged in*/}
+            <NavDropdown title={userInfo?.name || "Profile"} id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="/profile">
                 My Profile
               </NavDropdown.Item>
@@ -53,7 +54,7 @@ const Header = () => {
           </Nav>
         </Navbar.Collapse>
       </Container>
-    </Navbar>
+    </Navbar >
   );
 };
 

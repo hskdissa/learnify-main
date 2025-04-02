@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 // Vitest configuration
 export default defineConfig({
   server: {
+    //changed port to avoid conflict
     port: 3000,
     // Added proxy for the backend api, so that it knows which port our backend is running on
     proxy: {

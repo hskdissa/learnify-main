@@ -25,10 +25,13 @@ export const listNotes = () => async (dispatch, getState) => {
     const {
       userLogin: { userInfo },
     } = getState();
-
+    
+    // Used for debugging (will expose sensitive information, dont uncomment)
+    // console.log("User info: {}", userInfo);
+    // console.log("Token being sent: {}", userInfo?.token);
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userInfo?.token}`,
       },
     };
 

@@ -6,6 +6,8 @@ node.modules/
 frontend/node_modules/
 /.pnp
 .pnp.js
+bun.lockb
+frontend/bun.lockb
 
 # testing
 /coverage
