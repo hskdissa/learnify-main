@@ -1,49 +1,39 @@
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import MainScreen from "../../components/MainScreen";
-import "./SigninScreen.css";
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";  
+import { login } from "../../actions/userActions";
 import Loading from "../../components/Loading";
-import ErrorMessage from "../../components/ErrorMessage"; 
+import ErrorMessage from "../../components/ErrorMessage";
+import "./SigninScreen.css";
 
 const SigninScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-
+    const dispatch = useDispatch();  // Use dispatch from react-redux
     const navigate = useNavigate();
+
+    const userLogin = useSelector((state) => state.userLogin);
+    const { loading, error: loginError, userInfo } = userLogin;
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate("/dashboard");
+        }
+    }, [navigate, userInfo]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        setError("");
-
-        try {
-            const config = {
-                headers: { "Content-type": "application/json" }
-            };
-
-            setLoading(true);
-            const { data } = await axios.post('/api/users/login', { email, password }, config);
-            console.log(data);
-
-            localStorage.setItem('userInfo', JSON.stringify(data));
-            setLoading(false);
-
-            navigate("/dashboard");
-        } catch (err) {
-            setLoading(false);
-            setError(err.response?.data?.message || "Invalid Email or Password");
-        }
+        dispatch(login(email, password)); // Dispatch the login action
     };
 
     return (
         <MainScreen title="Login">
             <div className="loginContainer">
-                {error && <ErrorMessage variant="danger">{error}</ErrorMessage>}
-                {loading && <Loading />}
-                
+                {loginError && <ErrorMessage variant="danger">{loginError}</ErrorMessage>} {/* Display the login error */}
+                {loading && <Loading />} {/* Display loading indicator */}
+
                 <Form onSubmit={submitHandler}>
                     <Form.Group controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>

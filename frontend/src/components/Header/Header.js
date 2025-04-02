@@ -1,8 +1,20 @@
 import { Container, Form, FormControl, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { logout } from "../../actions/userActions"; 
 
 const Header = () => {
-  const navigate = useNavigate();  // Use the useNavigate hook to get the navigate function
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    //navigate('/');
+  }
 
   return (
     <Navbar bg="primary" expand="lg" variant="dark">
@@ -33,10 +45,7 @@ const Header = () => {
 
               <NavDropdown.Divider />
               <NavDropdown.Item
-                onClick={() => {
-                  localStorage.removeItem("userInfo");
-                  navigate("/");  // Use navigate to redirect after logout
-                }}
+                onClick={logoutHandler}
               >
                 Logout
               </NavDropdown.Item>

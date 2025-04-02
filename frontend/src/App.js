@@ -6,6 +6,8 @@ import Dashboard from "./screens/Dashboard/Dashboard";
 import UploadFile from "./screens/UploadFile/UploadFile";
 import SigninScreen from './screens/SigninScreen/SigninScreen';
 import SignupScreen from './screens/SignupScreen/SignupScreen';
+import CreateNote from './screens/CreateNote/CreateNote';
+import UpdateNote from './screens/UpdateNote/UpdateNote';
 
 const App = () => (
   <Router>
@@ -15,8 +17,9 @@ const App = () => (
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SigninScreen />} />
         <Route path="/register" element={<SignupScreen />} />
-        
-        {/* Protect routes like dashboard and upload */}
+        <Route path="/createnote" element={<CreateNote />} />
+        <Route path="/note/:id" element={<UpdateNote />} />
+
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/uploadfile" element={<UploadFile />} />
       </Routes>
