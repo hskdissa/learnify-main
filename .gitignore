@@ -9,6 +9,9 @@ frontend/node_modules/
 bun.lockb
 frontend/bun.lockb
 
+#uploads
+/uploads
+
 # testing
 /coverage
 
