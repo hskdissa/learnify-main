@@ -1,0 +1,38 @@
+/* Fade-in Effect */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 1.5s ease-in-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Hero Image Styling */
+  .hero-image {
+    width: 60%; /* Adjust for responsiveness */
+    max-width: 600px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  /* Navbar Styling */
+  .navbar-nav .nav-link {
+    font-size: 18px;
+    font-weight: 500;
+    color: #007bff !important;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    color: #0056b3 !important;
+  }
+  
