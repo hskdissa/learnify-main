@@ -4,8 +4,8 @@ const connectDB = require('./config/db');
 const cors = require('cors');
 
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
-const userRoutes = require('./routes/userRoutes'); 
-const noteRoutes = require('./routes/noteRoutes'); 
+const userRoutes = require('./routes/userRoutes');
+const noteRoutes = require('./routes/noteRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 
 const app = express();
@@ -18,11 +18,11 @@ app.use(cors());
 
 // Root route
 app.get('/', (req, res) => {
-    res.send("API is running..");
+  res.send("API is running..");
 });
 
 // User routes
-app.use('/api/users', userRoutes); 
+app.use('/api/users', userRoutes);
 
 // Notes routes
 app.use('/api/notes', noteRoutes);
@@ -38,5 +38,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
+// changed port for vite since ports for server are 5000 and 5001
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
