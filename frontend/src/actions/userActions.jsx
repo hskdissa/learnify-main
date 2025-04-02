@@ -11,7 +11,8 @@ export const login = (email, password) => async (dispatch) => {
             headers: { "Content-type": "application/json" }
         };
 
-        const { data } = await axios.post('/api/users/login', { email, password }, config);
+        //const { data } = await axios.post('/api/users/login', { email, password }, config);
+        const { data } = await axios.post('http://localhost:5001/api/users/login', { email, password }, config);
         
         // Dispatch success action with user data
         dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
@@ -40,7 +41,9 @@ export const register = (name, email, password) => async (dispatch) => {
         const config = {
             headers: { "Content-type": "application/json" },
         };
-        const { data } = await axios.post('/api/users', { name, email, password }, config);
+        //const { data } = await axios.post('/api/users', { name, email, password }, config);
+        const { data } = await axios.post('http://localhost:5001/api/users', { name, email, password }, config);
+
 
         dispatch({ type: USER_REGISTER_SUCCESS, payload: data });
 

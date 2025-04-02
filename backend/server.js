@@ -16,6 +16,12 @@ app.use(express.json());
 // CORS middleware
 app.use(cors());
 
+// CORS middleware
+app.use(cors({
+  origin: 'http://localhost:3000',  // Only allow requests from localhost:3000 (your frontend)
+  credentials: true                 // Allow cookies or credentials if required
+}));
+
 // Root route
 app.get('/', (req, res) => {
   res.send("API is running..");

@@ -24,7 +24,7 @@ export const uploadFileAction = (file) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post('/api/upload/uploadfile', formData, config);
+    const { data } = await axios.post('http://localhost:5001/api/upload/uploadfile', formData, config);
 
     dispatch({
       type: UPLOAD_FILE_SUCCESS,
