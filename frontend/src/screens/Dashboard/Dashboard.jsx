@@ -43,25 +43,9 @@ const Dashboard = () => {
     if (!userInfo) {
         return <div>Loading...</div>; // or redirect to login page
     }
-/*
-    const fileUploadHandler = async (e) => {
-        const formData = new FormData();
-        formData.append('file', e.target.files[0]);  // Assuming 'file' is the field name
-      
-        try {
-          const response = await fetch('/api/uploadfile', {
-            method: 'POST',
-            body: formData,
-          });
-      
-          const result = await response.json();
-          console.log(result);  // Process the notes received from Gemini here
-        } catch (error) {
-          console.error('Error uploading the file:', error);
-        }
-      };
-      */
 
+
+    
     return (
         <MainScreen title={`Welcome Back ${userInfo.name}..`}>
             <Link to="/uploadfile">

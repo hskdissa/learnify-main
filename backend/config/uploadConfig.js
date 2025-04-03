@@ -1,5 +1,5 @@
-// backend/config/uploadConfig.js
 const multer = require('multer');
+
 const path = require('path');
 
 // Storage configuration
@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 // Multer instance with limits and storage configuration
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // Optional: limit file size (e.g., 10MB)
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
 
 module.exports = upload;

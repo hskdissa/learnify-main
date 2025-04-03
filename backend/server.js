@@ -7,6 +7,8 @@ const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 const userRoutes = require('./routes/userRoutes');
 const noteRoutes = require('./routes/noteRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const openaiRoutes = require("./routes/openaiRoutes");
+
 
 const app = express();
 dotenv.config();
@@ -16,9 +18,9 @@ app.use(express.json());
 // CORS middleware
 app.use(cors());
 
-// CORS middleware
+
 app.use(cors({
-  origin: 'http://localhost:3000',  // Only allow requests from localhost:3000 (your frontend)
+  origin: 'http://localhost:3000',  // Only allow requests from localhost:3000 (frontend)
   credentials: true                 // Allow cookies or credentials if required
 }));
 
@@ -33,9 +35,16 @@ app.use('/api/users', userRoutes);
 // Notes routes
 app.use('/api/notes', noteRoutes);
 
-// Upload file route (properly organized)
-app.use('/api/upload', uploadRoutes);// This will make the uploadRoutes accessible at /api/uploadfile
+// Upload file route
+app.use('/api/upload', uploadRoutes);
 
+// Study notes generation route
+app.use("/api/openai", openaiRoutes);
+
+app.use((req, res, next) => {
+  console.log(`Incoming Request: ${req.method} ${req.url}`);
+  next();
+});
 
 
 
