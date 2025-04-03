@@ -4,6 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Accordion, Badge, Button, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { listNotes } from '../../actions/noteActions';
+import { listStudyNotes } from "../../actions/studyNoteAction.jsx";
+
+
 import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage'; 
 
@@ -43,25 +46,9 @@ const Dashboard = () => {
     if (!userInfo) {
         return <div>Loading...</div>; // or redirect to login page
     }
-/*
-    const fileUploadHandler = async (e) => {
-        const formData = new FormData();
-        formData.append('file', e.target.files[0]);  // Assuming 'file' is the field name
-      
-        try {
-          const response = await fetch('/api/uploadfile', {
-            method: 'POST',
-            body: formData,
-          });
-      
-          const result = await response.json();
-          console.log(result);  // Process the notes received from Gemini here
-        } catch (error) {
-          console.error('Error uploading the file:', error);
-        }
-      };
-      */
 
+
+    
     return (
         <MainScreen title={`Welcome Back ${userInfo.name}..`}>
             <Link to="/uploadfile">
@@ -98,7 +85,10 @@ const Dashboard = () => {
                                         <Accordion.Button as="div">{note.title}</Accordion.Button>
                                     </span>
                                     <div>
-                                        <Button href={`/note/${note._id}`}>Edit</Button>
+                                    <Link to={`/note/${note._id}`}>
+                                        <Button>Edit</Button>
+                                    </Link>
+
                                         <Button
                                             variant="danger"
                                             className="mx-2"

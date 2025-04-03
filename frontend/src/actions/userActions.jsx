@@ -1,8 +1,9 @@
 import axios from "axios";
 import { USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT, USER_REGISTER_FAIL, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS } from "../constants/userConstants";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
-//SIGNIN ACTIONSs
+//SIGNIN ACTIONS
 export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: USER_LOGIN_REQUEST });
@@ -11,8 +12,8 @@ export const login = (email, password) => async (dispatch) => {
             headers: { "Content-type": "application/json" }
         };
 
-        //const { data } = await axios.post('/api/users/login', { email, password }, config);
-        const { data } = await axios.post('http://localhost:5001/api/users/login', { email, password }, config);
+
+        const { data } = await axios.post(`${API_URL}/api/users/login`, { email, password }, config);
         
         // Dispatch success action with user data
         dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
@@ -41,8 +42,8 @@ export const register = (name, email, password) => async (dispatch) => {
         const config = {
             headers: { "Content-type": "application/json" },
         };
-        //const { data } = await axios.post('/api/users', { name, email, password }, config);
-        const { data } = await axios.post('http://localhost:5001/api/users', { name, email, password }, config);
+        
+        const { data } = await axios.post(`${API_URL}/api/users`, { name, email, password }, config);
 
 
         dispatch({ type: USER_REGISTER_SUCCESS, payload: data });

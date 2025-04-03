@@ -5,10 +5,12 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
 import { noteCreateReducer, noteDeleteReducer, noteListReducer, noteUpdateReducer } from "./reducers/noteReducers";
 import { uploadFileReducer } from "./reducers/uploadReducers";
+import { openaiGenerateReducer } from './reducers/openaiReducers';
+import { studyNoteListReducer, studyNoteDeleteReducer } from './reducers/studyNoteReducers';
 
 // Combine your reducers
 const rootReducer = combineReducers({
-  // Add your reducers here, for example:
+  // Add reducers here, for example:
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   noteList: noteListReducer,
@@ -16,6 +18,9 @@ const rootReducer = combineReducers({
   noteUpdate: noteUpdateReducer,
   noteDelete: noteDeleteReducer,
   uploadFile: uploadFileReducer,
+  openaiGenerate: openaiGenerateReducer,
+  studyNoteList: studyNoteListReducer,  // Study notes reducers
+  studyNoteDelete: studyNoteDeleteReducer,
 
 });
 
