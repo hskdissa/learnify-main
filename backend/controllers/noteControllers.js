@@ -19,27 +19,6 @@ const createNote = asyncHandler(async (req, res) => {
     }
 });
 
-const getNoteById = async (req, res) => {
-    const { id } = req.params;
-    try {
-      const note = await Note.findById(id);
-      if (!note) {
-        return res.status(404).json({ message: 'Note not found' });
-      }
-      
-      // Check if the user is authorized
-      if (note.user.toString() !== req.user._id.toString()) {
-        return res.status(403).json({ message: 'User not authorized' });
-      }
-  
-      res.json(note);
-    } catch (error) {
-      res.status(500).json({ message: 'Server error' });
-    }
-  };
-  
-
-/*
 const getNoteById = asyncHandler(async (req, res) => {
     const note = await Note.findById(req.params.id);
 
@@ -49,7 +28,6 @@ const getNoteById = asyncHandler(async (req, res) => {
         res.status(404).json({ message: "Note not found" });
     }
 });
-*/
 
 const updateNote = asyncHandler(async (req, res) => {
     const { title, content, category } = req.body;

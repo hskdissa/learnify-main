@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { OPENAI_GENERATE_REQUEST, OPENAI_GENERATE_SUCCESS, OPENAI_GENERATE_FAIL } from '../constants/openaiConstants';
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 // Action to generate AI content
 export const generateAIContentAction = (extractedText) => async (dispatch, getState) => {
   try {
@@ -21,7 +19,7 @@ export const generateAIContentAction = (extractedText) => async (dispatch, getSt
 
     // Make the API request to the backend for AI content generation
     const { data } = await axios.post(
-      `${API_URL}/api/openai/generate`,
+      'http://localhost:5001/api/openai/generate',
       { extractedText },
       config
     );

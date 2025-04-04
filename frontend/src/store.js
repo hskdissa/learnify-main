@@ -6,7 +6,6 @@ import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
 import { noteCreateReducer, noteDeleteReducer, noteListReducer, noteUpdateReducer } from "./reducers/noteReducers";
 import { uploadFileReducer } from "./reducers/uploadReducers";
 import { openaiGenerateReducer } from './reducers/openaiReducers';
-import { studyNoteListReducer, studyNoteDetailsReducer, studyNoteDeleteReducer } from "./reducers/studyNoteReducers";
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -19,9 +18,6 @@ const rootReducer = combineReducers({
   noteDelete: noteDeleteReducer,
   uploadFile: uploadFileReducer,
   openaiGenerate: openaiGenerateReducer,
-  studyNoteList: studyNoteListReducer,
-  studyNoteDetails: studyNoteDetailsReducer,
-  studyNoteDelete: studyNoteDeleteReducer,
 
 });
 

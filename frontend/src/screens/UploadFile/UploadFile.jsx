@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadFileAction } from "../../actions/uploadActions";
 import { generateAIContentAction } from '../../actions/openaiActions';
 import { Card, Button, Alert, Form, Spinner } from 'react-bootstrap';
 import MainScreen from "../../components/MainScreen";
-import ReactMarkdown from 'react-markdown';
 
 const UploadFile = () => {
   const [file, setFile] = useState(null);
-  const [aiResponses, setAiResponses] = useState([]); 
   const dispatch = useDispatch();
 
+<<<<<<< HEAD
+  // get user login state
+=======
 
+>>>>>>> 2dc9157 (AI-generated Notes Implementation)
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -24,21 +25,6 @@ const UploadFile = () => {
 
   console.log('OpenAI Response:', openaiResponse);
 
-
-    useEffect(() => {
-      if (openaiResponse) {
-        setAiResponses((prevResponses) => [...prevResponses, openaiResponse]);
-      }
-    }, [openaiResponse]); // Runs whenever openaiResponse updates
-
-
-    // Function to handle AI response and store it in the array
-    const handleAIResponse = () => {
-      if (openaiResponse) {
-        setAiResponses((prevResponses) => [...prevResponses, openaiResponse]); // Store the new AI response in the array
-      }
-    };
-
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -48,8 +34,6 @@ const UploadFile = () => {
       dispatch(uploadFileAction(file));
     }
   };
-
-  
 
   // handle AI content generation
   const handleGenerateAIContent = async () => {
@@ -99,18 +83,37 @@ const UploadFile = () => {
           )}
 
 
-
           {success && <Alert variant="success" style={{ marginTop: 20 }}>File uploaded successfully!</Alert>}
 
-
-          {aiResponses.length > 0 && (
+          {extractedText && (
             <div style={{ marginTop: 20 }}>
-              <h5>STUDY NOTES:</h5>
-              {aiResponses.map((response, index) => (
-                <Card key={index} style={{ padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px", marginBottom: "10px" }}>
-                  <ReactMarkdown>{response}</ReactMarkdown>
-                </Card>
-              ))}
+              <h5>Extracted Text:</h5>
+              <pre style={{
+                whiteSpace: "pre-wrap",
+                backgroundColor: "#f8f9fa",
+                padding: "10px",
+                borderRadius: "5px",
+                maxHeight: "300px",
+                overflowY: "auto"
+              }}>
+                {extractedText}
+              </pre>
+            </div>
+          )}
+
+          {openaiResponse && (
+            <div style={{ marginTop: 20 }}>
+              <h5>AI Response:</h5>
+              <pre style={{
+                whiteSpace: "pre-wrap",
+                backgroundColor: "#f8f9fa",
+                padding: "10px",
+                borderRadius: "5px",
+                maxHeight: "300px",
+                overflowY: "auto"
+              }}>
+                {openaiResponse}
+              </pre>
             </div>
           )}
 
@@ -118,16 +121,14 @@ const UploadFile = () => {
           {openaiError && <Alert variant="danger" style={{ marginTop: 20 }}>{openaiError}</Alert>}
 
           {extractedText && !openaiLoading && (
-            <Button
-              onClick={handleGenerateAIContent}
-              style={{ marginTop: 20 }}
+            <Button 
+              onClick={handleGenerateAIContent} 
+              style={{ marginTop: 20 }} 
               size="lg"
             >
-              Generate Study Notes
+              Generate AI Content
             </Button>
           )}
-
-          
         </Card.Body>
       </Card>
     </MainScreen>

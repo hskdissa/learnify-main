@@ -4,9 +4,11 @@ const { protect } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-// AI generation route
 router.post("/generate", protect, generateAIResponse);
 
-
+router.get("/test", (req, res) => {
+    res.json({ message: "OpenAI route is working!" });
+  });
+  
 
 module.exports = router;

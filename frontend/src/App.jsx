@@ -8,10 +8,6 @@ import SigninScreen from './screens/SigninScreen/SigninScreen';
 import SignupScreen from './screens/SignupScreen/SignupScreen';
 import CreateNote from './screens/CreateNote/CreateNote';
 import UpdateNote from './screens/UpdateNote/UpdateNote';
-//import StudyNotePage from './components/StudyNotePage';
-
-console.log("API URL:", import.meta.env.VITE_API_URL);
-
 
 const App = () => (
   <Router>

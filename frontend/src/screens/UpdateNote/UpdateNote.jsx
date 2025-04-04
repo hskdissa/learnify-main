@@ -1,157 +1,64 @@
-import React, { useEffect, useState } from "react";
-import MainScreen from "../../components/MainScreen";
-import axios from "axios";
-import { Button, Card, Form } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteNoteAction, updateNoteAction } from "../../actions/noteActions";
-import ErrorMessage from "../../components/ErrorMessage";
-import Loading from "../../components/Loading";
-import ReactMarkdown from "react-markdown";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Button, ProgressBar, Spinner } from 'react-bootstrap';
+import axios from 'axios';
 
-const UpdateNote = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+const UploadNotes = () => {
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [notes, setNotes] = useState('');
 
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [category, setCategory] = useState("");
-    const [date, setDate] = useState("");
-
-    const noteUpdate = useSelector((state) => state.noteUpdate);
-    const { loading, error } = noteUpdate;
-
-    const noteDelete = useSelector((state) => state.noteDelete);
-    const { loading: loadingDelete, error: errorDelete } = noteDelete;
-
-    // Fetch note using the authorization token
-    useEffect(() => {
-        const fetchNote = async () => {
-            const token = localStorage.getItem("authToken");
-            if (!token) {
-                console.error("No authorization token found");
-                return;
-            }
-            try {
-                const { data } = await axios.get(`/api/notes/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setTitle(data.title);
-                setContent(data.content);
-                setCategory(data.category);
-                setDate(data.updatedAt);
-            } catch (error) {
-                console.error("Error fetching note:", error);
-            }
-        };
-
-        fetchNote();
-    }, [id]);
-
-    const resetHandler = () => {
-        setTitle("");
-        setCategory("");
-        setContent("");
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
     };
 
-    const updateHandler = (e) => {
-        e.preventDefault();
-
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-            console.error("No authorization token found");
+    const handleFileUpload = async () => {
+        if (!file) {
+            alert('Please select a file to upload');
             return;
         }
 
-        if (!title || !content || !category) return;
+        const formData = new FormData();
+        formData.append('file', file);
 
-        dispatch(updateNoteAction(id, title, content, category, token)); // Pass the token here
-        resetHandler();
-        navigate("/dashboard"); // Redirect after updating
-    };
+        setLoading(true);
 
-    const deleteHandler = () => {
-        if (window.confirm("Are you sure?")) {
-            const token = localStorage.getItem("authToken");
-            if (!token) {
-                console.error("No authorization token found");
-                return;
-            }
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                onUploadProgress: (progressEvent) => {
+                    const { loaded, total } = progressEvent;
+                    const percentage = Math.floor((loaded * 100) / total);
+                    setProgress(percentage);
+                },
+            };
 
-            dispatch(deleteNoteAction(id, token)); // Pass the token here
-            navigate("/dashboard"); // Redirect after deleting
+            const { data } = await axios.post('/api/upload', formData, config);
+
+            setNotes(data.notes); // Store the generated notes from the response
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert('File upload failed');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <MainScreen title="Edit Note">
-            <Card>
-                <Card.Header>Edit your Note</Card.Header>
-                <Card.Body>
-                    <Form onSubmit={updateHandler}>
-                        {loadingDelete && <Loading />}
-                        {error && <ErrorMessage variant="danger">{error}</ErrorMessage>}
-                        {errorDelete && <ErrorMessage variant="danger">{errorDelete}</ErrorMessage>}
+        <div>
+            <h3>Upload Notes</h3>
+            <input type="file" onChange={handleFileChange} accept=".pdf,.docx,.txt" />
+            <Button onClick={handleFileUpload} disabled={loading}>
+                {loading ? 'Uploading...' : 'Upload Notes'}
+            </Button>
 
-                        <Form.Group controlId="title">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter the title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="content">
-                            <Form.Label>Content</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                placeholder="Enter the content"
-                                rows={4}
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                            />
-                        </Form.Group>
-
-                        {content && (
-                            <Card className="mt-3">
-                                <Card.Header>Note Preview</Card.Header>
-                                <Card.Body>
-                                    <ReactMarkdown>{content}</ReactMarkdown>
-                                </Card.Body>
-                            </Card>
-                        )}
-
-                        <Form.Group controlId="category">
-                            <Form.Label>Category</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter the Category"
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                            />
-                        </Form.Group>
-
-                        {loading && <Loading size={50} />}
-                        <Button variant="primary" type="submit" className="mt-3">
-                            Update Note
-                        </Button>
-                        <Button className="mx-2 mt-3" variant="danger" onClick={deleteHandler}>
-                            Delete Note
-                        </Button>
-                    </Form>
-                </Card.Body>
-
-                <Card.Footer className="text-muted">
-                    Updated on - {date ? date.substring(0, 10) : "N/A"}
-                </Card.Footer>
-            </Card>
-        </MainScreen>
+            {loading && <ProgressBar animated now={progress} />}
+            {loading && <Spinner animation="border" />}
+            {notes && <div><h4>Generated Notes</h4><p>{notes}</p></div>}
+        </div>
     );
 };
 
-export default UpdateNote;
+export default UploadNotes;
