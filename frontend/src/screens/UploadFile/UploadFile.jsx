@@ -9,14 +9,10 @@ import ReactMarkdown from 'react-markdown';
 
 const UploadFile = () => {
   const [file, setFile] = useState(null);
-  const [aiResponses, setAiResponses] = useState([]); 
+  const [aiResponses, setAiResponses] = useState([]);
   const dispatch = useDispatch();
 
-<<<<<<< HEAD
   // get user login state
-=======
-
->>>>>>> 2dc9157 (AI-generated Notes Implementation)
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -29,19 +25,19 @@ const UploadFile = () => {
   console.log('OpenAI Response:', openaiResponse);
 
 
-    useEffect(() => {
-      if (openaiResponse) {
-        setAiResponses((prevResponses) => [...prevResponses, openaiResponse]);
-      }
-    }, [openaiResponse]); // Runs whenever openaiResponse updates
+  useEffect(() => {
+    if (openaiResponse) {
+      setAiResponses((prevResponses) => [...prevResponses, openaiResponse]);
+    }
+  }, [openaiResponse]); // Runs whenever openaiResponse updates
 
 
-    // Function to handle AI response and store it in the array
-    const handleAIResponse = () => {
-      if (openaiResponse) {
-        setAiResponses((prevResponses) => [...prevResponses, openaiResponse]); // Store the new AI response in the array
-      }
-    };
+  // Function to handle AI response and store it in the array
+  const handleAIResponse = () => {
+    if (openaiResponse) {
+      setAiResponses((prevResponses) => [...prevResponses, openaiResponse]); // Store the new AI response in the array
+    }
+  };
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -53,7 +49,7 @@ const UploadFile = () => {
     }
   };
 
-  
+
 
   // handle AI content generation
   const handleGenerateAIContent = async () => {
@@ -79,9 +75,9 @@ const UploadFile = () => {
                 {file && (
                   <div style={{ marginTop: 10 }}>
                     <strong>Selected File:</strong> {file.name}{" "}
-                    <Button 
-                      variant="outline-danger" 
-                      size="sm" 
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
                       onClick={() => setFile(null)}
                     >
                       Clear
@@ -91,10 +87,10 @@ const UploadFile = () => {
                 {error && <Alert variant="danger" style={{ marginTop: 10 }}>{error}</Alert>}
               </Form.Group>
 
-              <Button 
-                onClick={handleUpload} 
-                style={{ marginTop: 10 }} 
-                size="lg" 
+              <Button
+                onClick={handleUpload}
+                style={{ marginTop: 10 }}
+                size="lg"
                 disabled={!file || loading}
               >
                 {loading ? <Spinner animation="border" size="sm" /> : "Upload"}
@@ -131,7 +127,7 @@ const UploadFile = () => {
             </Button>
           )}
 
-          
+
         </Card.Body>
       </Card>
     </MainScreen>
