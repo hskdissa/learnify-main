@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const OpenAI = require("openai");
-const StudyNote = require('../models/studyNoteModel');  // Import the StudyNote model
+const StudyNote = require('../models/studyNoteModel');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,8 +15,9 @@ const generateAIResponse = asyncHandler(async (req, res) => {
     throw new Error("No text provided for AI processing");
   }
 
+  
   try {
-    // Adjusting the prompt to ensure detailed, structured study notes
+
     const prompt = `
     Please generate **structured study notes** based on the following text.  
     Follow these formatting rules:  
@@ -36,17 +37,13 @@ const generateAIResponse = asyncHandler(async (req, res) => {
       - **[Another Subtopic]**  
         - Explanation in bullet points  
 
-    Ensure clarity, logical structure, and well-formatted notes to make studying easier.  
-
+    Ensure clarity, logical structure, and well-formatted notes to make studying easier.
     `;
-    
-    
-    // Log the prompt to check before sending it to the AI
+
     console.log("Prompt:", prompt);
-    
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4", // Ensure you're using GPT-4 for the best response quality
+      model: "gpt-4",
       temperature: 0.2, 
       max_tokens: 2000,
       messages: [
@@ -57,18 +54,16 @@ const generateAIResponse = asyncHandler(async (req, res) => {
         { role: "user", content: prompt }
       ],
     });
+
+
     
-
-
-
-    // Log OpenAI's response to inspect it
     console.log("OpenAI Response:", response);
-    
-    if (response && response.choices && response.choices[0]) {
+
+    if (response && response.choices && response.choices.length > 0) {
       const aiResponse = response.choices[0].message.content;
       console.log("AI Response:", aiResponse);
 
-      // Save the AI-generated study note to the database
+
       const studyNote = new StudyNote({
         aiResponse,
         user: req.user._id,
