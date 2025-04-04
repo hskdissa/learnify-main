@@ -103,12 +103,14 @@ const UploadFile = () => {
           {success && <Alert variant="success" style={{ marginTop: 20 }}>File uploaded successfully!</Alert>}
 
 
-          {openaiResponse && (
+          {aiResponses.length > 0 && (
             <div style={{ marginTop: 20 }}>
               <h5>STUDY NOTES:</h5>
-              <Card style={{ padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
-                <ReactMarkdown>{openaiResponse}</ReactMarkdown>
-              </Card>
+              {aiResponses.map((response, index) => (
+                <Card key={index} style={{ padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px", marginBottom: "10px" }}>
+                  <ReactMarkdown>{response}</ReactMarkdown>
+                </Card>
+              ))}
             </div>
           )}
 
@@ -116,14 +118,15 @@ const UploadFile = () => {
           {openaiError && <Alert variant="danger" style={{ marginTop: 20 }}>{openaiError}</Alert>}
 
           {extractedText && !openaiLoading && (
-            <Button 
-              onClick={handleGenerateAIContent} 
-              style={{ marginTop: 20 }} 
+            <Button
+              onClick={handleGenerateAIContent}
+              style={{ marginTop: 20 }}
               size="lg"
             >
               Generate Study Notes
             </Button>
           )}
+
           
         </Card.Body>
       </Card>

@@ -11,7 +11,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const UpdateNote = () => {
     const { id } = useParams();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [title, setTitle] = useState("");
@@ -25,10 +25,20 @@ const UpdateNote = () => {
     const noteDelete = useSelector((state) => state.noteDelete);
     const { loading: loadingDelete, error: errorDelete } = noteDelete;
 
+    // Fetch note using the authorization token
     useEffect(() => {
         const fetchNote = async () => {
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                console.error("No authorization token found");
+                return;
+            }
             try {
-                const { data } = await axios.get(`/api/notes/${id}`);
+                const { data } = await axios.get(`/api/notes/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 setTitle(data.title);
                 setContent(data.content);
                 setCategory(data.category);
@@ -49,15 +59,29 @@ const UpdateNote = () => {
 
     const updateHandler = (e) => {
         e.preventDefault();
+
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            console.error("No authorization token found");
+            return;
+        }
+
         if (!title || !content || !category) return;
-        dispatch(updateNoteAction(id, title, content, category));
+
+        dispatch(updateNoteAction(id, title, content, category, token)); // Pass the token here
         resetHandler();
         navigate("/dashboard"); // Redirect after updating
     };
 
     const deleteHandler = () => {
         if (window.confirm("Are you sure?")) {
-            dispatch(deleteNoteAction(id));
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                console.error("No authorization token found");
+                return;
+            }
+
+            dispatch(deleteNoteAction(id, token)); // Pass the token here
             navigate("/dashboard"); // Redirect after deleting
         }
     };

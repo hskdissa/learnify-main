@@ -8,7 +8,8 @@ const userRoutes = require('./routes/userRoutes');
 const noteRoutes = require('./routes/noteRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const openaiRoutes = require("./routes/openaiRoutes");
-const studyNoteRoutes = require('./routes/studyNoteRoutes');
+const studyNoteRoutes = require("./routes/studyNoteRoutes");
+
 
 
 const app = express();
@@ -42,7 +43,11 @@ app.use('/api/upload', uploadRoutes);
 // Study notes generation route
 app.use("/api/openai", openaiRoutes);
 
-app.use('/api/studynotes', studyNoteRoutes);
+app.use("/api/studynotes", studyNoteRoutes);
+
+
+
+
 
 app.use((req, res, next) => {
   console.log(`Incoming Request: ${req.method} ${req.url}`);
