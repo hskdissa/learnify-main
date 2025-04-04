@@ -8,11 +8,12 @@ const openai = new OpenAI({
 
 const generateAIResponse = asyncHandler(async (req, res) => {
   console.log("Received request body:", req.body);
-  const { extractedText } = req.body;
+  const { extractedText, title } = req.body;
 
-  if (!extractedText) {
+  if (!extractedText || !title) {
     res.status(400);
-    throw new Error("No text provided for AI processing");
+    throw new Error("Title and text are required for AI processing");
+    //throw new Error("No text provided for AI processing");
   }
 
   
@@ -45,7 +46,7 @@ const generateAIResponse = asyncHandler(async (req, res) => {
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       temperature: 0.2, 
-      max_tokens: 2000,
+      max_tokens: 1000,
       messages: [
         {
           role: "system",
@@ -65,6 +66,7 @@ const generateAIResponse = asyncHandler(async (req, res) => {
 
 
       const studyNote = new StudyNote({
+        title,
         aiResponse,
         user: req.user._id,
         createdAt: Date.now(),

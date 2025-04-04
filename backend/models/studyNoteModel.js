@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const studyNoteSchema = mongoose.Schema(
   {
+    title: {
+      type: String,
+      required: true, 
+    },
     aiResponse: {
       type: String,
       required: true,  // The AI-generated response

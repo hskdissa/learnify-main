@@ -40,6 +40,13 @@ const Dashboard = () => {
     const deleteHandler = (id) => {
         if (window.confirm('Are you sure?')) {
             // Add delete logic here
+            if (type === "note") {
+                // Dispatch action to delete a note
+                dispatch(deleteNote(id));
+            } else if (type === "studyNote") {
+                // Dispatch action to delete a study note
+                dispatch(deleteStudyNote(id));
+            }
         }
     };
 
@@ -54,7 +61,7 @@ const Dashboard = () => {
             dispatch(listNotes()); // fetch notes only if user is logged in
             dispatch(listStudyNotes()); // Fetch study notes
         }
-    }, [dispatch, userInfo, navigate, successCreate]); // add userInfo & navigate as dependencies
+    }, [dispatch, userInfo, navigate, successCreate, successDelete]); // add userInfo & navigate as dependencies
 
     // Add a check for userInfo before trying to access userInfo.name
     if (!userInfo) {
@@ -112,6 +119,7 @@ const Dashboard = () => {
                                         >
                                             Delete
                                         </Button>
+
                                     </div>
                                 </Card.Header>
                                 <Accordion.Body>
@@ -140,105 +148,56 @@ const Dashboard = () => {
             {/* Display Study Notes */}
             <h3>My Study Notes</h3>
             {!loadingStudy && !errorStudy && studyNotes?.length > 0 && (
-                <Carousel fade interval={5000} controls>
-                    {/* Add each slide with two cards */}
-                    {studyNotes.map((studyNote, index) => (
-                        index % 2 === 0 && (
-                            <Carousel.Item key={studyNote._id}>
-                                <Row className="justify-content-center">
-                                    {/* Display two cards per slide */}
-                                    <Col md={6} lg={5} xl={4} style={{ marginBottom: '20px' }}>
-                                        <Card style={{ width: '100%', height: '100%' }}>
-                                            <Card.Body>
-                                                <Card.Title>{studyNote.title}</Card.Title>
+                <Row className="justify-content-center">
+                    {studyNotes.map((studyNote) => (
+                        <Col key={studyNote._id} md={6} lg={4} xl={3} style={{ marginBottom: '20px' }}>
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>{studyNote.title}</Card.Title>
 
-                                                {/* AI Response Preview */}
-                                                <div
-                                                    style={{
-                                                        maxHeight: '150px',
-                                                        overflow: 'auto',
-                                                        border: '1px solid #ddd',
-                                                        padding: '10px',
-                                                        borderRadius: '5px',
-                                                        background: '#f8f9fa',
-                                                        fontSize: '14px',
-                                                        whiteSpace: 'pre-line'
-                                                    }}
-                                                >
-                                                    <strong>AI Response:</strong>
-                                                    {studyNote.aiResponse
-                                                        ? studyNote.aiResponse.substring(0, 150) + "..."
-                                                        : "No AI-generated response available."}
-                                                </div>
+                                    {/* AI Response Preview */}
+                                    <div
+                                        style={{
+                                            maxHeight: '150px',
+                                            overflow: 'auto',
+                                            border: '1px solid #ddd',
+                                            padding: '10px',
+                                            borderRadius: '5px',
+                                            background: '#f8f9fa',
+                                            fontSize: '14px',
+                                            whiteSpace: 'pre-line'
+                                        }}
+                                    >
+                                        <strong>AI Response:</strong>
+                                        {studyNote.aiResponse
+                                            ? studyNote.aiResponse.substring(0, 150) + "..."
+                                            : "No AI-generated response available."}
+                                    </div>
 
-                                                <div className="d-flex justify-content-between mt-2">
-                                                    <Link to={`/studynote/${studyNote._id}`}>
-                                                        <Button variant="primary" size="sm">
-                                                            Study
-                                                        </Button>
-                                                    </Link>
-                                                    <Button
-                                                        variant="danger"
-                                                        size="sm"
-                                                        onClick={() => deleteHandler(studyNote._id)}
-                                                    >
-                                                        Delete
-                                                    </Button>
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
+                                    <div className="d-flex justify-content-between mt-2">
+                                        <Link to={`/studynote/${studyNote._id}`}>
+                                            <Button variant="primary" size="sm">
+                                                Study
+                                            </Button>
+                                        </Link>
 
-                                    {/* Check for next card to display in the same slide */}
-                                    {studyNotes[index + 1] && (
-                                        <Col md={6} lg={5} xl={4} style={{ marginBottom: '20px' }}>
-                                            <Card style={{ width: '100%', height: '100%' }}>
-                                                <Card.Body>
-                                                    <Card.Title>{studyNotes[index + 1].title}</Card.Title>
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            onClick={() => deleteHandler(studyNote._id, "studyNote")} // Pass the type
+                                        >
+                                            Delete
+                                        </Button>
 
-                                                    {/* AI Response Preview */}
-                                                    <div
-                                                        style={{
-                                                            maxHeight: '150px',
-                                                            overflow: 'auto',
-                                                            border: '1px solid #ddd',
-                                                            padding: '10px',
-                                                            borderRadius: '5px',
-                                                            background: '#f8f9fa',
-                                                            fontSize: '14px',
-                                                            whiteSpace: 'pre-line'
-                                                        }}
-                                                    >
-                                                        <strong>AI Response:</strong>
-                                                        {studyNotes[index + 1].aiResponse
-                                                            ? studyNotes[index + 1].aiResponse.substring(0, 150) + "..."
-                                                            : "No AI-generated response available."}
-                                                    </div>
 
-                                                    <div className="d-flex justify-content-between mt-2">
-                                                        <Link to={`/studynote/${studyNotes[index + 1]._id}`}>
-                                                            <Button variant="primary" size="sm">
-                                                                Study
-                                                            </Button>
-                                                        </Link>
-                                                        <Button
-                                                            variant="danger"
-                                                            size="sm"
-                                                            onClick={() => deleteHandler(studyNotes[index + 1]._id)}
-                                                        >
-                                                            Delete
-                                                        </Button>
-                                                    </div>
-                                                </Card.Body>
-                                            </Card>
-                                        </Col>
-                                    )}
-                                </Row>
-                            </Carousel.Item>
-                        )
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
                     ))}
-                </Carousel>
+                </Row>
             )}
+
 
 
         </MainScreen>

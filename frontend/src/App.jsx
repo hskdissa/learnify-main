@@ -8,7 +8,10 @@ import SigninScreen from './screens/SigninScreen/SigninScreen';
 import SignupScreen from './screens/SignupScreen/SignupScreen';
 import CreateNote from './screens/CreateNote/CreateNote';
 import UpdateNote from './screens/UpdateNote/UpdateNote';
-//import StudyNotePage from './components/StudyNotePage';
+import SingleStudyNote from "./screens/SingleStudyNote/SingleStudyNote";
+
+
+
 
 console.log("API URL:", import.meta.env.VITE_API_URL);
 
@@ -26,6 +29,8 @@ const App = () => (
 
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/uploadfile" element={<UploadFile />} />
+        <Route path="/studynote/:id" element={<SingleStudyNote />} />
+
       </Routes>
     </main>
     <Footer />

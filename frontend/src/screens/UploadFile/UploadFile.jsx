@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadFileAction } from "../../actions/uploadActions";
 import { generateAIContentAction } from '../../actions/openaiActions';
@@ -9,10 +8,10 @@ import ReactMarkdown from 'react-markdown';
 
 const UploadFile = () => {
   const [file, setFile] = useState(null);
-  const [aiResponses, setAiResponses] = useState([]);
+  const [aiResponses, setAiResponses] = useState([]); 
+  const [title, setTitle] = useState("");
   const dispatch = useDispatch();
 
-  // get user login state
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -24,20 +23,11 @@ const UploadFile = () => {
 
   console.log('OpenAI Response:', openaiResponse);
 
-
   useEffect(() => {
     if (openaiResponse) {
       setAiResponses((prevResponses) => [...prevResponses, openaiResponse]);
     }
-  }, [openaiResponse]); // Runs whenever openaiResponse updates
-
-
-  // Function to handle AI response and store it in the array
-  const handleAIResponse = () => {
-    if (openaiResponse) {
-      setAiResponses((prevResponses) => [...prevResponses, openaiResponse]); // Store the new AI response in the array
-    }
-  };
+  }, [openaiResponse]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -49,13 +39,10 @@ const UploadFile = () => {
     }
   };
 
-
-
-  // handle AI content generation
   const handleGenerateAIContent = async () => {
     if (extractedText) {
       console.log('Dispatching AI content generation action');
-      await dispatch(generateAIContentAction(extractedText));
+      await dispatch(generateAIContentAction(extractedText, title));
     }
   };
 
@@ -75,9 +62,9 @@ const UploadFile = () => {
                 {file && (
                   <div style={{ marginTop: 10 }}>
                     <strong>Selected File:</strong> {file.name}{" "}
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
+                    <Button 
+                      variant="outline-danger" 
+                      size="sm" 
                       onClick={() => setFile(null)}
                     >
                       Clear
@@ -87,10 +74,10 @@ const UploadFile = () => {
                 {error && <Alert variant="danger" style={{ marginTop: 10 }}>{error}</Alert>}
               </Form.Group>
 
-              <Button
-                onClick={handleUpload}
-                style={{ marginTop: 10 }}
-                size="lg"
+              <Button 
+                onClick={handleUpload} 
+                style={{ marginTop: 10 }} 
+                size="lg" 
                 disabled={!file || loading}
               >
                 {loading ? <Spinner animation="border" size="sm" /> : "Upload"}
@@ -98,36 +85,49 @@ const UploadFile = () => {
             </>
           )}
 
-
-
+          {/* Success Message */}
           {success && <Alert variant="success" style={{ marginTop: 20 }}>File uploaded successfully!</Alert>}
 
+          {/* Title Input and AI Button */}
+          {extractedText && (
+            <div className="mt-4">
+              <Form.Group controlId="noteTitle">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "18px" }}>Enter Study Note Title</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter a title for the study notes"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  style={{ padding: "10px", borderRadius: "5px" }}
+                />
+              </Form.Group>
 
-          {aiResponses.length > 0 && (
-            <div style={{ marginTop: 20 }}>
-              <h5>STUDY NOTES:</h5>
-              {aiResponses.map((response, index) => (
-                <Card key={index} style={{ padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px", marginBottom: "10px" }}>
-                  <ReactMarkdown>{response}</ReactMarkdown>
-                </Card>
-              ))}
+              <div className="text-center mt-3">
+                <Button onClick={handleGenerateAIContent} size="lg" variant="success" disabled={!title || openaiLoading}>
+                  {openaiLoading ? <Spinner animation="border" size="sm" /> : "Generate Study Notes"}
+                </Button>
+              </div>
             </div>
           )}
 
           {openaiLoading && <Spinner animation="border" style={{ marginTop: 20 }} />}
           {openaiError && <Alert variant="danger" style={{ marginTop: 20 }}>{openaiError}</Alert>}
 
-          {extractedText && !openaiLoading && (
-            <Button
-              onClick={handleGenerateAIContent}
-              style={{ marginTop: 20 }}
-              size="lg"
-            >
-              Generate Study Notes
-            </Button>
+          {aiResponses.length > 0 && (
+            <div style={{ marginTop: 20 }}>
+              <h5>STUDY NOTES:</h5>
+              {aiResponses.map((response, index) => {
+                const content = response?.content || response; // Ensure it is a string
+                return (
+                  <Card key={index} style={{ padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px", marginBottom: "10px" }}>
+                    <ReactMarkdown>{content}</ReactMarkdown>
+                  </Card>
+                );
+              })}
+            </div>
           )}
-
-
+          
+          
         </Card.Body>
       </Card>
     </MainScreen>
@@ -135,4 +135,3 @@ const UploadFile = () => {
 };
 
 export default UploadFile;
-
