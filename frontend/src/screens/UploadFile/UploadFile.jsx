@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadFileAction } from "../../actions/uploadActions";
 import { generateAIContentAction } from '../../actions/openaiActions';
 import { Card, Button, Alert, Form, Spinner } from 'react-bootstrap';
 import MainScreen from "../../components/MainScreen";
+import ReactMarkdown from 'react-markdown';
 
 const UploadFile = () => {
   const [file, setFile] = useState(null);
+  const [aiResponses, setAiResponses] = useState([]); 
   const dispatch = useDispatch();
 
 <<<<<<< HEAD
@@ -25,6 +28,21 @@ const UploadFile = () => {
 
   console.log('OpenAI Response:', openaiResponse);
 
+
+    useEffect(() => {
+      if (openaiResponse) {
+        setAiResponses((prevResponses) => [...prevResponses, openaiResponse]);
+      }
+    }, [openaiResponse]); // Runs whenever openaiResponse updates
+
+
+    // Function to handle AI response and store it in the array
+    const handleAIResponse = () => {
+      if (openaiResponse) {
+        setAiResponses((prevResponses) => [...prevResponses, openaiResponse]); // Store the new AI response in the array
+      }
+    };
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -34,6 +52,8 @@ const UploadFile = () => {
       dispatch(uploadFileAction(file));
     }
   };
+
+  
 
   // handle AI content generation
   const handleGenerateAIContent = async () => {
@@ -83,37 +103,16 @@ const UploadFile = () => {
           )}
 
 
+
           {success && <Alert variant="success" style={{ marginTop: 20 }}>File uploaded successfully!</Alert>}
 
-          {extractedText && (
-            <div style={{ marginTop: 20 }}>
-              <h5>Extracted Text:</h5>
-              <pre style={{
-                whiteSpace: "pre-wrap",
-                backgroundColor: "#f8f9fa",
-                padding: "10px",
-                borderRadius: "5px",
-                maxHeight: "300px",
-                overflowY: "auto"
-              }}>
-                {extractedText}
-              </pre>
-            </div>
-          )}
 
           {openaiResponse && (
             <div style={{ marginTop: 20 }}>
-              <h5>AI Response:</h5>
-              <pre style={{
-                whiteSpace: "pre-wrap",
-                backgroundColor: "#f8f9fa",
-                padding: "10px",
-                borderRadius: "5px",
-                maxHeight: "300px",
-                overflowY: "auto"
-              }}>
-                {openaiResponse}
-              </pre>
+              <h5>STUDY NOTES:</h5>
+              <Card style={{ padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
+                <ReactMarkdown>{openaiResponse}</ReactMarkdown>
+              </Card>
             </div>
           )}
 
@@ -126,9 +125,10 @@ const UploadFile = () => {
               style={{ marginTop: 20 }} 
               size="lg"
             >
-              Generate AI Content
+              Generate Study Notes
             </Button>
           )}
+          
         </Card.Body>
       </Card>
     </MainScreen>

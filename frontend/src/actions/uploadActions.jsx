@@ -6,6 +6,9 @@ import {
   UPLOAD_FILE_FAIL 
 } from '../constants/uploadConstants';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export const uploadFileAction = (file) => async (dispatch, getState) => {
   try {
     dispatch({ type: UPLOAD_FILE_REQUEST });
@@ -24,7 +27,7 @@ export const uploadFileAction = (file) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post('http://localhost:5001/api/upload/uploadfile', formData, config);
+    const { data } = await axios.post(`${API_URL}/api/upload/uploadfile`, formData, config);
 
     dispatch({
       type: UPLOAD_FILE_SUCCESS,

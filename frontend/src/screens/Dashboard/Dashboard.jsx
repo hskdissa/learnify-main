@@ -4,6 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Accordion, Badge, Button, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { listNotes } from '../../actions/noteActions';
+import { listStudyNotes } from "../../actions/studyNoteAction.jsx";
+
+
 import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage'; 
 
@@ -82,7 +85,10 @@ const Dashboard = () => {
                                         <Accordion.Button as="div">{note.title}</Accordion.Button>
                                     </span>
                                     <div>
-                                        <Button href={`/note/${note._id}`}>Edit</Button>
+                                    <Link to={`/note/${note._id}`}>
+                                        <Button>Edit</Button>
+                                    </Link>
+
                                         <Button
                                             variant="danger"
                                             className="mx-2"

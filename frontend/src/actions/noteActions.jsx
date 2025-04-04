@@ -15,6 +15,7 @@ import {
   NOTES_DELETE_FAIL,
 } from "../constants/noteConstants";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const listNotes = () => async (dispatch, getState) => {
   try {
@@ -35,7 +36,7 @@ export const listNotes = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`http://localhost:5001/api/notes`, config);
+    const { data } = await axios.get(`${API_URL}/api/notes`, config);
 
     dispatch({
       type: NOTE_LIST_SUCCESS,
@@ -74,7 +75,7 @@ export const createNoteAction = (title, content, category) => async (
     };
 
     const { data } = await axios.post(
-      `http://localhost:5001/api/notes/create`,
+      `${API_URL}/api/notes/create`,
       { title, content, category },
       config
     );
@@ -111,7 +112,7 @@ export const deleteNoteAction = (id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.delete(`http://localhost:5001/api/notes/${id}`, config);
+    const { data } = await axios.delete(`${API_URL}/api/notes/${id}`, config);
 
     dispatch({
       type: NOTES_DELETE_SUCCESS,
@@ -150,7 +151,7 @@ export const updateNoteAction = (id, title, content, category) => async (
     };
 
     const { data } = await axios.put(
-      `http://localhost:5001/api/notes/${id}`,
+      `${API_URL}/api/notes/${id}`,
       { title, content, category },
       config
     );
