@@ -27,4 +27,4 @@ export const openaiGenerateReducer = (state = initialState, action) => {
       return state;
   }
 };
-
+c

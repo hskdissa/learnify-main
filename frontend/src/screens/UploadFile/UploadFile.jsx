@@ -74,10 +74,10 @@ const UploadFile = () => {
                 {error && <Alert variant="danger" style={{ marginTop: 10 }}>{error}</Alert>}
               </Form.Group>
 
-              <Button 
-                onClick={handleUpload} 
-                style={{ marginTop: 10 }} 
-                size="lg" 
+              <Button
+                onClick={handleUpload}
+                style={{ marginTop: 10 }}
+                size="lg"
                 disabled={!file || loading}
               >
                 {loading ? <Spinner animation="border" size="sm" /> : "Upload"}
@@ -135,3 +135,4 @@ const UploadFile = () => {
 };
 
 export default UploadFile;
+

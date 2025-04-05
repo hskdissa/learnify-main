@@ -66,7 +66,10 @@ const generateAIResponse = asyncHandler(async (req, res) => {
 
 
       const studyNote = new StudyNote({
+<<<<<<< HEAD
         title,
+=======
+>>>>>>> b8403af1f1460d0b38610295cb73550e836366c9
         aiResponse,
         user: req.user._id,
         createdAt: Date.now(),
