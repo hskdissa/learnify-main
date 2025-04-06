@@ -9,6 +9,7 @@ import SignupScreen from './screens/SignupScreen/SignupScreen';
 import CreateNote from './screens/CreateNote/CreateNote';
 import UpdateNote from './screens/UpdateNote/UpdateNote';
 import SingleStudyNote from "./screens/SingleStudyNote/SingleStudyNote";
+import FlashcardDisplay from "./screens/FlashcardDisplay/FlashcardDisplay";
 
 
 
@@ -30,6 +31,7 @@ const App = () => (
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/uploadfile" element={<UploadFile />} />
         <Route path="/studynote/:id" element={<SingleStudyNote />} />
+        <Route path="/flashcards/generate" element={<FlashcardDisplay />} />
 
       </Routes>
     </main>

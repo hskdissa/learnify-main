@@ -19,10 +19,10 @@ export const generateAIContentAction = (extractedText, title) => async (dispatch
       },
     };
 
-    // Make the API request to the backend for AI content generation
+    
     const { data } = await axios.post(
       `${API_URL}/api/openai/generate`,
-      { extractedText, title },  // Pass title along with extractedText
+      { extractedText, title },
       config
     );
 

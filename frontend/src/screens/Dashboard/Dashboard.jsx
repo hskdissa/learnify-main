@@ -5,9 +5,7 @@ import { Carousel, Accordion, Badge, Button, Card, Row, Col } from 'react-bootst
 import { useDispatch, useSelector } from 'react-redux';
 import { listNotes } from '../../actions/noteActions';
 import { listStudyNotes, deleteStudyNote } from "../../actions/studyNoteAction.jsx";
-
-
-
+import { listFlashcardsAction } from "../../actions/flashcardActions";
 
 import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage'; 
@@ -27,6 +25,11 @@ const Dashboard = () => {
 
     const studyNoteDelete = useSelector((state) => state.studyNoteDelete);
     const { success: successDelete } = studyNoteDelete;
+
+    // Fetch flashcards from Redux store
+    const flashcardList = useSelector((state) => state.flashcardList);
+    const { loading: loadingFlashcards, flashcards, error: errorFlashcards } = flashcardList;
+    
 
 
     // Fetch user login info from Redux store
@@ -52,6 +55,7 @@ const Dashboard = () => {
 
     console.log(notes);
     console.log(studyNotes);
+    console.log('Flashcards:', flashcards);  // Logs all flashcards
 
 
     useEffect(() => {
@@ -60,6 +64,7 @@ const Dashboard = () => {
         } else {
             dispatch(listNotes()); // fetch notes only if user is logged in
             dispatch(listStudyNotes()); // Fetch study notes
+            dispatch(listFlashcardsAction()); // Fetch flashcards
         }
     }, [dispatch, userInfo, navigate, successCreate, successDelete]); // add userInfo & navigate as dependencies
 
@@ -197,6 +202,35 @@ const Dashboard = () => {
                     ))}
                 </Row>
             )}
+                        {/* Flashcards Display */}
+            <h3>My Flashcards</h3>
+            {loadingFlashcards && <Loading />}
+            {errorFlashcards && <ErrorMessage variant="danger">{errorFlashcards}</ErrorMessage>}
+
+            {!loadingFlashcards && !errorFlashcards && flashcards?.length > 0 && (
+                <Row className="justify-content-center">
+                    {flashcards.map((flashcard) => (
+                        <Col key={flashcard._id} md={6} lg={4} xl={3} style={{ marginBottom: "20px" }}>
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>{flashcard.title}</Card.Title>
+                                    {/* Render flashcard content here */}
+                                    <p>{flashcard.question}</p>
+                                    <p>{flashcard.answer}</p>
+
+                                    <Link to={`/flashcard/${flashcard._id}`}>
+                                        <Button variant="primary" size="sm">
+                                            Study Flashcard
+                                        </Button>
+                                    </Link>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            )}
+
+            
 
 
 

@@ -1,12 +1,19 @@
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
+
 import  thunk  from "redux-thunk"; // Weird, keeps changing
+
+
 import { composeWithDevTools } from "redux-devtools-extension";
 import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
 import { noteCreateReducer, noteDeleteReducer, noteListReducer, noteUpdateReducer } from "./reducers/noteReducers";
 import { uploadFileReducer } from "./reducers/uploadReducers";
 import { openaiGenerateReducer } from './reducers/openaiReducers';
 import { studyNoteListReducer, studyNoteDetailsReducer, studyNoteDeleteReducer } from "./reducers/studyNoteReducers";
+
+
+import { flashcardDeleteReducer, flashcardDetailsReducer, flashcardGenerateReducer, flashcardListReducer } from './reducers/flashcardReducers';
+
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -22,6 +29,15 @@ const rootReducer = combineReducers({
   studyNoteList: studyNoteListReducer,
   studyNoteDetails: studyNoteDetailsReducer,
   studyNoteDelete: studyNoteDeleteReducer,
+
+  flashcardList: flashcardListReducer,
+  flashcardDetails: flashcardDetailsReducer,
+  flashcardDelete: flashcardDeleteReducer,
+  flashcardGenerate: flashcardGenerateReducer,
+
+
+
+
 
 });
 

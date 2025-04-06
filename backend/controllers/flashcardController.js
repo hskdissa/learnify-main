@@ -22,6 +22,12 @@ const generateFlashcards = asyncHandler(async (req, res) => {
       throw new Error("Study Note not found.");
     }
 
+      // Ensure the authenticated user owns the study note
+    if (studyNote.user.toString() !== req.user._id.toString()) {
+      res.status(403);
+      throw new Error("You are not authorized to generate flashcards for this study note.");
+    }
+
     try {
       const prompt = `
       Generate a set of flashcards from the following study notes.  

@@ -11,13 +11,15 @@ const protect = asyncHandler(async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
+      // Extract token from header
       token = req.headers.authorization.split(" ")[1];
       console.log("Received Token:", token);
 
-      //decode token id
+      // Verify token using JWT_SECRET
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       console.log("Decoded JWT:", decoded);
-
+      
+      // Fetch user by ID from token and exclude password field
       req.user = await User.findById(decoded.id).select("-password");
       console.log("Authenticated User:", req.user);
 
