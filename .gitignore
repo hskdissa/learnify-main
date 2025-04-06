@@ -6,8 +6,11 @@ node.modules/
 frontend/node_modules/
 /.pnp
 .pnp.js
-bun.lockb
-frontend/bun.lockb
+
+# new bun version replaces bun.lockb with bun.lock
+# using bun.lock, deleted both bun.lockb files
+# bun.lockb
+# frontend/bun.lockb
 
 #uploads
 /uploads
