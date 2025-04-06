@@ -48,11 +48,11 @@ export const flashcardListReducer = (state = { flashcards: [] }, action) => {
   }
 };
 
-// Reducer for getting a single flashcard's details
+
 export const flashcardDetailsReducer = (state = { flashcard: {} }, action) => {
   switch (action.type) {
     case FLASHCARD_DETAILS_REQUEST:
-      return { loading: true, ...state };
+      return { loading: true };
     case FLASHCARD_DETAILS_SUCCESS:
       return { loading: false, flashcard: action.payload };
     case FLASHCARD_DETAILS_FAIL:
@@ -61,6 +61,10 @@ export const flashcardDetailsReducer = (state = { flashcard: {} }, action) => {
       return state;
   }
 };
+
+
+
+
 
 // Reducer for deleting a flashcard
 export const flashcardDeleteReducer = (state = {}, action) => {

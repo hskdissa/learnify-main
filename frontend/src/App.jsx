@@ -10,6 +10,13 @@ import CreateNote from './screens/CreateNote/CreateNote';
 import UpdateNote from './screens/UpdateNote/UpdateNote';
 import SingleStudyNote from "./screens/SingleStudyNote/SingleStudyNote";
 import FlashcardDisplay from "./screens/FlashcardDisplay/FlashcardDisplay";
+import FlashcardDisplayScreen from "./screens/FlashcardDisplayScreen/FlashcardDisplayScreen";
+import FlashcardDetailScreen from './screens/FlashcardDetailScreen/FlashcardDetailScreen';
+
+
+
+
+
 
 
 
@@ -32,6 +39,11 @@ const App = () => (
         <Route path="/uploadfile" element={<UploadFile />} />
         <Route path="/studynote/:id" element={<SingleStudyNote />} />
         <Route path="/flashcards/generate" element={<FlashcardDisplay />} />
+
+        <Route path="/studynote/:id/flashcards" element={<FlashcardDisplayScreen />} />
+        <Route path="/studynote/:id/flashcards/:flashcardId" element={<FlashcardDetailScreen />} />
+
+
 
       </Routes>
     </main>

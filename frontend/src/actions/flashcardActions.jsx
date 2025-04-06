@@ -92,8 +92,9 @@ export const listFlashcardsAction = () => async (dispatch, getState) => {
   }
 };
 
+/*
 // Action to get details of a specific flashcard
-export const getFlashcardDetailsAction = (flashcardId) => async (dispatch, getState) => {
+export const getFlashcardDetailsAction = (studyNoteId, flashcardId) => async (dispatch, getState) => {
   try {
     dispatch({ type: FLASHCARD_DETAILS_REQUEST });
 
@@ -108,12 +109,17 @@ export const getFlashcardDetailsAction = (flashcardId) => async (dispatch, getSt
       },
     };
 
-    // Fetch details of the specific flashcard from the backend API
-    const { data } = await axios.get(`${API_URL}/api/flashcards/${flashcardId}`, config);
+    // Use both studyNoteId and flashcardId in the URL
+    const { data } = await axios.get(
+      `${API_URL}/api/flashcards/studynote/${studyNoteId}/flashcards/${flashcardId}`,
+      config
+    );
+
+    console.log('Fetched flashcard data:', data); // Log the response data
 
     dispatch({
       type: FLASHCARD_DETAILS_SUCCESS,
-      payload: data.flashcard,
+      payload: data,
     });
   } catch (error) {
     const message =
@@ -124,6 +130,49 @@ export const getFlashcardDetailsAction = (flashcardId) => async (dispatch, getSt
     });
   }
 };
+
+*/
+
+export const getFlashcardDetailsAction = (studyNoteId, flashcardId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: FLASHCARD_DETAILS_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    // Fetch a single flashcard based on the studyNoteId and flashcardId
+    const { data } = await axios.get(
+      `${API_URL}/api/flashcards/studynote/${studyNoteId}/flashcards/${flashcardId}`,
+      config
+    );
+
+    console.log('Fetched flashcard:', data);  // Debugging
+
+    dispatch({
+      type: FLASHCARD_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message =
+      error.response?.data?.message || error.message || 'Failed to fetch flashcard details.';
+    dispatch({
+      type: FLASHCARD_DETAILS_FAIL,
+      payload: message,
+    });
+  }
+};
+
+
+
+
 
 // Action to delete a flashcard
 export const deleteFlashcardAction = (flashcardId) => async (dispatch, getState) => {
@@ -157,3 +206,36 @@ export const deleteFlashcardAction = (flashcardId) => async (dispatch, getState)
     });
   }
 };
+
+
+export const listFlashcardsByStudyNote = (studyNoteId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: FLASHCARD_LIST_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${API_URL}/api/flashcards/studynote/${studyNoteId}`, config);
+
+    dispatch({
+      type: FLASHCARD_LIST_SUCCESS,
+      payload: data, 
+    });
+  } catch (error) {
+    const message =
+      error.response?.data?.message || error.message || 'Failed to fetch flashcards.';
+    dispatch({
+      type: FLASHCARD_LIST_FAIL,
+      payload: message,
+    });
+  }
+};
+

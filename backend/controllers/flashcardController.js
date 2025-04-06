@@ -104,16 +104,30 @@ const getAllFlashcards = asyncHandler(async (req, res) => {
     res.status(200).json(flashcards);
   });
   
-  // Get a single flashcard set by ID
-  const getFlashcardById = asyncHandler(async (req, res) => {
-    const flashcard = await Flashcard.findOne({ _id: req.params.id, user: req.user._id });
-  
+
+
+
+const getFlashcardById = async (req, res) => {
+  const { studyNoteId, flashcardId } = req.params;
+  console.log("Received studyNoteId:", studyNoteId);
+  console.log("Received flashcardId:", flashcardId); // Debug log to check the values
+  try {
+    const flashcard = await Flashcard.findOne({
+      '_id': flashcardId,
+      'studyNote': studyNoteId
+    });
+
     if (!flashcard) {
-      return res.status(404).json({ message: "Flashcard set not found." });
+      return res.status(404).json({ message: "Flashcard not found" });
     }
+
+    res.json(flashcard);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
   
-    res.status(200).json(flashcard);
-  });
   
   // Delete a single flashcard set by ID
   const deleteFlashcard = asyncHandler(async (req, res) => {
@@ -126,5 +140,23 @@ const getAllFlashcards = asyncHandler(async (req, res) => {
     await flashcard.deleteOne();
     res.status(200).json({ message: "Flashcard set deleted successfully." });
   });
+
+  // Get all flashcards for a specific study note ID
+const getFlashcardsByStudyNoteId = asyncHandler(async (req, res) => {
+  const { studyNoteId } = req.params;
+
+  if (!studyNoteId) {
+    res.status(400);
+    throw new Error("Study Note ID is required.");
+  }
+
+  const flashcards = await Flashcard.find({ studyNote: studyNoteId, user: req.user._id });
+
+  if (!flashcards || flashcards.length === 0) {
+    return res.status(404).json({ message: "No flashcards found for this study note." });
+  }
+
+  res.status(200).json(flashcards);
+});
   
-module.exports = { generateFlashcards, getAllFlashcards, getFlashcardById, deleteFlashcard };
+module.exports = { generateFlashcards, getAllFlashcards, getFlashcardById, deleteFlashcard, getFlashcardsByStudyNoteId };

@@ -9,6 +9,7 @@ import ReactMarkdown from "react-markdown";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable"; 
 import { generateFlashcardsAction } from "../../actions/flashcardActions";
+import MainScreen from "../../components/MainScreen"; 
 
 const SingleStudyNote = () => {
   const dispatch = useDispatch();
@@ -48,79 +49,94 @@ const SingleStudyNote = () => {
   const handleGenerateFlashcards = () => {
     if (id) {
       dispatch(generateFlashcardsAction(id)); // Generate flashcards
-      // After generating, redirect to FlashcardDisplay
-      navigate("/flashcards/generate", { state: { studyNoteId: id } });
+      navigate("/flashcards/generate", { state: { studyNoteId: id } }); // Redirect to flashcard generation screen
     }
   };
 
+  const viewFlashcardsHandler = () => {
+    navigate(`/studynote/${id}/flashcards`);
+  };
+  
+
   return (
-    <Container style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
-      {loading ? (
-        <div className="text-center">
-          <Loading />
+    <MainScreen title={`Study Note: ${studyNote ? studyNote.title : "Loading..."}`}>
+      <Container style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
+        {loading ? (
+          <div className="text-center">
+            <Loading />
+          </div>
+        ) : error ? (
+          <ErrorMessage variant="danger">{error}</ErrorMessage>
+        ) : (
+          studyNote && (
+            <Card style={{ padding: "20px", boxShadow: "0px 4px 10px rgba(0,0,0,0.1)" }}>
+              <Card.Header
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  background: "#f8f9fa",
+                }}
+              >
+                <h4>
+                  <Badge bg="success">{studyNote.title || "No Title"}</Badge>
+                </h4>
+              </Card.Header>
+
+              <Card.Body>
+                <h2>Study Note:</h2>
+                <div>
+                  {studyNote.aiResponse ? (
+                    <ReactMarkdown>{studyNote.aiResponse}</ReactMarkdown>
+                  ) : (
+                    <p className="text-muted">No AI-generated response available.</p>
+                  )}
+                </div>
+
+                <Button 
+                  onClick={downloadPDF} 
+                  className="mt-3" 
+                  variant="info"
+                >
+                  Download PDF
+                </Button>
+
+                {/* Button to generate flashcards */}
+                <Button
+                  onClick={handleGenerateFlashcards}
+                  className="mt-3 ms-3"
+                  variant="primary"
+                >
+                  Generate Flashcards
+                </Button>
+
+                {/* Button to View flashcards */}
+                <Button
+                  onClick={viewFlashcardsHandler}
+                  className="mt-3 ms-3"
+                  variant="primary"
+                >
+                  View Flashcards
+                </Button>
+
+                <footer className="blockquote-footer mt-3">
+                  Created On{" "}
+                  <cite title="Source Title">
+                    {new Date(studyNote.createdAt).toLocaleDateString()}
+                  </cite>
+                </footer>
+              </Card.Body>
+            </Card>
+          )
+        )}
+
+        <div className="text-center mt-4">
+          <Button variant="secondary" onClick={() => navigate("/dashboard")}>
+            Back to Dashboard
+          </Button>
         </div>
-      ) : error ? (
-        <ErrorMessage variant="danger">{error}</ErrorMessage>
-      ) : (
-        studyNote && (
-          <Card style={{ padding: "20px", boxShadow: "0px 4px 10px rgba(0,0,0,0.1)" }}>
-            <Card.Header
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                background: "#f8f9fa",
-              }}
-            >
-              <h4>
-                <Badge bg="success">{studyNote.title || "No Title"}</Badge>
-              </h4>
-            </Card.Header>
-
-            <Card.Body>
-              <h2>Study Note:</h2>
-              <div>
-                {studyNote.aiResponse ? (
-                  <ReactMarkdown>{studyNote.aiResponse}</ReactMarkdown>
-                ) : (
-                  <p className="text-muted">No AI-generated response available.</p>
-                )}
-              </div>
-
-              <Button 
-                onClick={downloadPDF} 
-                className="mt-3" 
-                variant="info"
-              >
-                Download PDF
-              </Button>
-
-              {/* Button to generate flashcards */}
-              <Button
-                onClick={handleGenerateFlashcards}
-                className="mt-3 ms-3"
-                variant="primary"
-              >
-                Generate Flashcards
-              </Button>
-
-              <footer className="blockquote-footer mt-3">
-                Created On{" "}
-                <cite title="Source Title">
-                  {new Date(studyNote.createdAt).toLocaleDateString()}
-                </cite>
-              </footer>
-            </Card.Body>
-          </Card>
-        )
-      )}
-
-      <div className="text-center mt-4">
-        <Button variant="secondary" onClick={() => navigate("/dashboard")}>
-          Back to Dashboard
-        </Button>
-      </div>
-    </Container>
+      </Container>
+    </MainScreen>
   );
 };
 
