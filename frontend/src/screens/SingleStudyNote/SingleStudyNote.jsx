@@ -6,6 +6,10 @@ import { getStudyNoteById } from "../../actions/studyNoteAction.jsx"; // Ensure 
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
 import ReactMarkdown from "react-markdown";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable"; 
+
+
 
 
 const SingleStudyNote = () => {
@@ -14,6 +18,82 @@ const SingleStudyNote = () => {
 
   const studyNoteDetails = useSelector((state) => state.studyNoteDetails);
   const { loading, error, studyNote } = studyNoteDetails;
+
+
+  const downloadPDF = () => {
+    if (!studyNote) return;
+  
+    const doc = new jsPDF();
+    const marginLeft = 10;
+    const marginTop = 10;
+    const maxWidth = 180; // Ensure text fits within the page width
+    const lineSpacing = 6; // Adjusted line spacing to reduce the space between lines
+  
+    // Set the title of the study note
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(studyNote.title || "Study Note", marginLeft, marginTop);
+  
+    // Move to the next line after the title
+    let yPosition = marginTop + 10;
+  
+    // Set body text format (normal text)
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+  
+    // Function to handle bold text (e.g., for headings)
+    const formatText = (text) => {
+      // Bold text should be wrapped in ** (like markdown style)
+      let formattedText = [];
+      let parts = text.split("**");
+  
+      // Alternate between normal and bold
+      parts.forEach((part, index) => {
+        if (index % 2 === 0) {
+          formattedText.push({ text: part, isBold: false });
+        } else {
+          formattedText.push({ text: part, isBold: true });
+        }
+      });
+  
+      return formattedText;
+    };
+  
+    // Format the study note text and split it to fit the width
+    const formattedText = formatText(studyNote.aiResponse || "No content available.");
+    
+    // Loop through the formatted text and add to the document
+    formattedText.forEach(({ text, isBold }, index) => {
+      // Apply bold formatting for the specific parts
+      if (isBold) {
+        doc.setFont("helvetica", "bold");
+      } else {
+        doc.setFont("helvetica", "normal");
+      }
+  
+      // Split the text to fit within the maxWidth
+      const splitText = doc.splitTextToSize(text, maxWidth);
+  
+      splitText.forEach((line, lineIndex) => {
+        if (yPosition + 10 > doc.internal.pageSize.height - marginTop) {
+          doc.addPage(); // Add a new page if text exceeds page limit
+          yPosition = marginTop; // Reset yPosition for new page
+        }
+        doc.text(line, marginLeft, yPosition);
+        yPosition += 10; // Move to the next line
+      });
+    });
+  
+    // Save the PDF
+    doc.save(`${studyNote.title || "study_note"}.pdf`);
+  };
+  
+  
+  
+
+  
+
+
 
   useEffect(() => {
     dispatch(getStudyNoteById(id)); // Fetch study note by ID
@@ -47,6 +127,11 @@ const SingleStudyNote = () => {
 
             <Card.Body>
               <h2>Study Note:</h2>
+
+              <Button onClick={() => downloadPDF(studyNote?.title, studyNote?.aiResponse)}>
+                Download PDF
+              </Button>
+
               <div
               >
                 {studyNote.aiResponse ? (
