@@ -24,7 +24,9 @@ const rootReducer = combineReducers({
   noteCreate: noteCreateReducer,
   noteUpdate: noteUpdateReducer,
   noteDelete: noteDeleteReducer,
+  
   uploadFile: uploadFileReducer,
+
   openaiGenerate: openaiGenerateReducer,
   studyNoteList: studyNoteListReducer,
   studyNoteDetails: studyNoteDetailsReducer,

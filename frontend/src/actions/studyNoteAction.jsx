@@ -54,21 +54,45 @@ export const getStudyNoteById = (id) => async (dispatch, getState) => {
 };
 
 // Delete a study note
+
+
 export const deleteStudyNote = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: STUDY_NOTE_DELETE_REQUEST });
 
-    const { userLogin: { userInfo } } = getState();
-    const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+    const {
+      userLogin: { userInfo },
+    } = getState();
 
-    await axios.delete(`${API_URL}/api/studynotes/${id}`, config);  // Updated URL with API_URL
-    dispatch({ type: STUDY_NOTE_DELETE_SUCCESS, payload: id });
+    if (!userInfo || !userInfo.token) {
+      console.error("No user token found");
+      throw new Error("User not authenticated");
+    }
+
+    console.log("Deleting study note:", id);
+    console.log("User Token:", userInfo.token);  // Log the token
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    await axios.delete(`${API_URL}/api/studynotes/${id}`, config);
+
+    dispatch({ type: STUDY_NOTE_DELETE_SUCCESS });
   } catch (error) {
+    console.error("Error deleting study note:", error.response?.data?.message || error.message);
+
     dispatch({
       type: STUDY_NOTE_DELETE_FAIL,
-      payload: error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
     });
   }
 };
+
+
+

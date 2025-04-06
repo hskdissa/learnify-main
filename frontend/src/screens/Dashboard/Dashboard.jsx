@@ -24,7 +24,7 @@ const Dashboard = () => {
     const { loading: loadingStudy, studyNotes, error: errorStudy } = studyNoteList;
 
     const studyNoteDelete = useSelector((state) => state.studyNoteDelete);
-    const { success: successDelete } = studyNoteDelete;
+    const { loading: loadingDelete, success: successDelete, error: errorDelete } = studyNoteDelete;
 
     // Fetch flashcards from Redux store
     const flashcardList = useSelector((state) => state.flashcardList);
@@ -40,18 +40,15 @@ const Dashboard = () => {
     const noteCreate = useSelector((state) => state.noteCreate);
     const { success: successCreate } = noteCreate;
 
+
+
+    
     const deleteHandler = (id) => {
-        if (window.confirm('Are you sure?')) {
-            // Add delete logic here
-            if (type === "note") {
-                // Dispatch action to delete a note
-                dispatch(deleteNote(id));
-            } else if (type === "studyNote") {
-                // Dispatch action to delete a study note
-                dispatch(deleteStudyNote(id));
-            }
-        }
+      if (window.confirm("Are you sure you want to delete this study note?")) {
+        dispatch(deleteStudyNote(id));
+      }
     };
+
 
     console.log(notes);
     console.log(studyNotes);
@@ -66,7 +63,14 @@ const Dashboard = () => {
             dispatch(listStudyNotes()); // Fetch study notes
             dispatch(listFlashcardsAction()); // Fetch flashcards
         }
-    }, [dispatch, userInfo, navigate, successCreate, successDelete]); // add userInfo & navigate as dependencies
+    }, [dispatch, userInfo, navigate, successCreate]); // add userInfo & navigate as dependencies
+
+    useEffect(() => {
+        if (successDelete) {
+          dispatch(listStudyNotes());
+        }
+      }, [dispatch, successDelete]);
+      
 
     // Add a check for userInfo before trying to access userInfo.name
     if (!userInfo) {
@@ -186,14 +190,9 @@ const Dashboard = () => {
                                             </Button>
                                         </Link>
 
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onClick={() => deleteHandler(studyNote._id, "studyNote")} // Pass the type
-                                        >
+                                        <Button variant="danger" onClick={() => deleteHandler(studyNote._id)}>
                                             Delete
                                         </Button>
-
 
                                     </div>
                                 </Card.Body>
