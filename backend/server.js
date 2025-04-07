@@ -10,6 +10,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const openaiRoutes = require("./routes/openaiRoutes");
 const studyNoteRoutes = require("./routes/studyNoteRoutes");
 const flashcardRoutes = require("./routes/flashcardRoutes");
+const quizRoutes = require("./routes/quizRoutes");
 
 
 const app = express();
@@ -47,6 +48,8 @@ app.use("/api/studynotes", studyNoteRoutes);
 
 
 app.use("/api/flashcards", flashcardRoutes);
+
+app.use("/api/quizzes", quizRoutes);
 
 
 app.use((req, res, next) => {

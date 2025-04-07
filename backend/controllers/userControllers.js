@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
+const UserScore = require("../models/userScoreModel");
 const generateToken = require('../utils/generateToken');
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -54,4 +55,24 @@ const authUser = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { registerUser, authUser };
+
+// Get user's total points, level, and badges
+const getUserScore = asyncHandler(async (req, res) => {
+  const userScore = await UserScore.findOne({ user: req.user._id });
+
+  if (!userScore) {
+    return res.json({ totalPoints: 0, level: 1, badges: [] });
+  }
+
+  res.json({
+    totalPoints: userScore.totalPoints,
+    level: userScore.level,
+    badges: userScore.badges,
+  });
+});
+
+
+
+
+
+module.exports = { registerUser, authUser, getUserScore };

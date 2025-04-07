@@ -13,6 +13,10 @@ import FlashcardDisplay from "./screens/FlashcardDisplay/FlashcardDisplay";
 import FlashcardDisplayScreen from "./screens/FlashcardDisplayScreen/FlashcardDisplayScreen";
 import FlashcardDetailScreen from './screens/FlashcardDetailScreen/FlashcardDetailScreen';
 
+import QuizGenerate from "./screens/Quiz/QuizGenerate"; // Path for QuizGenerate page
+import QuizDisplay from "./screens/Quiz/QuizDisplay"; // Path for QuizDisplay page
+
+import QuizConfirmation from "./screens/Quiz/QuizConfirmation"; // Import the confirmation page
 
 
 
@@ -38,10 +42,16 @@ const App = () => (
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/uploadfile" element={<UploadFile />} />
         <Route path="/studynote/:id" element={<SingleStudyNote />} />
+
+        <Route path="/quizzes/generate" element={<QuizConfirmation />} /> 
+        <Route path="/quiz/generate" element={<QuizGenerate />} />
+        <Route path="/quiz/display/:quizId" element={<QuizDisplay />} />
+        
         <Route path="/flashcards/generate" element={<FlashcardDisplay />} />
 
         <Route path="/studynote/:id/flashcards" element={<FlashcardDisplayScreen />} />
         <Route path="/studynote/:id/flashcards/:flashcardId" element={<FlashcardDetailScreen />} />
+
 
 
 

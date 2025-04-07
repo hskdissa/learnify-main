@@ -14,6 +14,12 @@ import { studyNoteListReducer, studyNoteDetailsReducer, studyNoteDeleteReducer }
 
 import { flashcardDeleteReducer, flashcardDetailsReducer, flashcardGenerateReducer, flashcardListReducer } from './reducers/flashcardReducers';
 
+import {
+  quizGenerateReducer,
+  quizDetailsReducer,
+  quizSubmitReducer,
+  quizResultReducer,
+} from "./reducers/quizReducers"; // Import the quiz reducers
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -36,6 +42,13 @@ const rootReducer = combineReducers({
   flashcardDetails: flashcardDetailsReducer,
   flashcardDelete: flashcardDeleteReducer,
   flashcardGenerate: flashcardGenerateReducer,
+
+  quizGeneration: quizGenerateReducer,
+  quizDetails: quizDetailsReducer,
+  quizSubmit: quizSubmitReducer,
+  quizResult: quizResultReducer,
+
+
 
 
 
