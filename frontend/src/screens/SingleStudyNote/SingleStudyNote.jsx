@@ -17,19 +17,22 @@ const SingleStudyNote = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // Redux state for study note
   const studyNoteDetails = useSelector((state) => state.studyNoteDetails);
   const { loading, error, studyNote } = studyNoteDetails;
 
+  // Redux state for quiz generation
   const quizGeneration = useSelector((state) => state.quizGenerateReducer || {});
   const { loading: quizLoading, error: quizError, quiz } = quizGeneration;
 
-  
+  // Redux state for quizzes list
+  const quizList = useSelector((state) => state.quizList || {});
+  const { quizzes } = quizList;
 
   // Fetch study note by ID
   useEffect(() => {
     dispatch(getStudyNoteById(id));
   }, [dispatch, id]);
-
 
   // Fetch quizzes related to this study note
   useEffect(() => {
@@ -37,8 +40,6 @@ const SingleStudyNote = () => {
       dispatch(getQuizzesByStudyNoteIdAction(studyNote._id)); // Fetch quizzes by study note ID
     }
   }, [dispatch, studyNote]);
-
-  
 
   // Download PDF functionality
   const downloadPDF = () => {
@@ -74,21 +75,19 @@ const SingleStudyNote = () => {
     navigate(`/studynote/${id}/flashcards`);
   };
 
+  // Handle Generate Quiz action
   const handleGenerateQuiz = () => {
-    if (id) {
+    if (id && !quiz) {  // Check if quiz is not already generated
       dispatch(generateQuizAction(id));
-  
-      // Navigate to QuizConfirmation while quiz is being generated
       navigate(`/quizzes/generate`, { state: { studyNoteId: id } });
     }
   };
-  
   
 
   // Handle Start Quiz
   const handleStartQuiz = () => {
     if (quiz && quiz._id) {
-      navigate(`/quiz/display/${quiz._id}`); // Navigate to QuizDisplay with quiz ID
+      navigate(`/quizzes/${studyNote._id}/${quiz._id}`); // Navigate to QuizDisplay with quiz ID
     }
   };
 
@@ -149,20 +148,21 @@ const SingleStudyNote = () => {
 
                 {/* Generate Quiz button */}
                 <Button
-                  onClick={handleGenerateQuiz}
-                  className="mt-3 ms-3"
-                  variant="primary"
-                  disabled={quizLoading || quiz || quizError} // Disable if quiz is loading or already exists
-                >
-                  Generate Quiz
-                </Button>
+                onClick={handleGenerateQuiz}
+                className="mt-3 ms-3"
+                variant="primary"
+                disabled={quizLoading || quiz || quizError || !studyNote} // Disable when quiz is loading or already exists
+              >
+                Generate Quiz
+              </Button>
+
 
                 {/* Start Quiz button */}
                 <Button
                   onClick={handleStartQuiz}
                   className="mt-3 ms-3"
                   variant="primary"
-                  disabled={!quiz || quizLoading} // Enable only if quiz exists
+                  disabled={!quiz || quizLoading} // Enable only if quiz exists and not loading
                 >
                   Start Quiz
                 </Button>

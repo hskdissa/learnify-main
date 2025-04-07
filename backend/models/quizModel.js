@@ -9,8 +9,21 @@ const quizSchema = mongoose.Schema(
     questions: [
       {
         question: { type: String, required: true },
-        options: [{ type: String, required: true }],
-        correctAnswer: { type: String, required: true },
+        options: {
+          type: [String],
+          required: true,
+          validate: [(val) => val.length >= 2, 'At least two options are required.'],
+        },
+        correctAnswer: {
+          type: String,
+          required: true,
+          validate: {
+            validator: function (answer) {
+              return this.options.includes(answer);
+            },
+            message: 'Correct answer must be one of the provided options.',
+          },
+        },
       },
     ],
     user: {
@@ -21,6 +34,10 @@ const quizSchema = mongoose.Schema(
     studyNote: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'StudyNote',
+    },
+    score: {
+      type: Number,
+      default: 0, // Stores quiz score if needed
     },
     createdAt: {
       type: Date,

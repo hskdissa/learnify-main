@@ -1,95 +1,64 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { generateQuizAction } from "../../actions/quizActions";
-import { useNavigate, useParams, Link } from "react-router-dom";  // Import Link from react-router-dom
+import { useNavigate, useLocation } from "react-router-dom";
+import { Button, Container, Alert } from "react-bootstrap";
 import MainScreen from "../../components/MainScreen";
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
-import { Button } from "react-bootstrap"; // Make sure Button is imported
+import { generateQuizAction } from "../../actions/quizActions"; // Action to generate the quiz
 
 const QuizConfirmation = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { studyNoteId } = useParams(); // Get study note ID from URL
+  const dispatch = useDispatch();
+  const { state } = useLocation();
+  const { studyNoteId } = state || {};
 
-  // Get quiz state from Redux store
-  const quizGenerate = useSelector((state) => state.quizGenerate || {});
-  const { loading, quiz, error } = quizGenerate;
+  // State management for quiz generation
+  const quizGeneration = useSelector((state) => state.quizGenerateReducer);
+  const { loading, error, quiz } = quizGeneration;
 
-  // Log the entire state to check if the quiz data is there
-  console.log('quizGenerate state:', quizGenerate);
-
-
-
-
-  const handleGoToStudyNote = () => {
-    // Navigate to the study note page
-    navigate(`/studynote/${studyNoteId}`);
-  };
-
-  // Fetch quiz when component mounts
   useEffect(() => {
-    if (studyNoteId && !quiz) {
-      // Dispatch the generate quiz action if studyNoteId is available and quiz is not already generated
-      dispatch(generateQuizAction(studyNoteId));
+    // If no studyNoteId, navigate back to the dashboard
+    if (!studyNoteId) {
+      navigate('/dashboard');
+    } else if (!quiz) {  // Check if quiz is not already generated
+      // Ensure the quiz generation is triggered only once
+      const alreadyGenerated = localStorage.getItem(`quizGeneratedFor_${studyNoteId}`);
+      if (!alreadyGenerated) {
+        console.log("Starting quiz generation...");
+        // Dispatch the action to generate the quiz
+        dispatch(generateQuizAction(studyNoteId));
+        localStorage.setItem(`quizGeneratedFor_${studyNoteId}`, 'true');  // Mark as generated in local storage
+      }
     }
-  }, [dispatch, studyNoteId, quiz]);
+  }, [dispatch, studyNoteId, navigate, quiz]);  // Add quiz to dependency array to track changes
 
-  // Show loading state
-  if (loading) {
-    return (
-      <MainScreen title="Generating Quiz...">
-        <Loading />
-      </MainScreen>
-    );
-  }
+  useEffect(() => {
+    if (quiz && quiz._id) {
+      console.log("Quiz successfully generated:", quiz); // Log the generated quiz details
+      // After the quiz is generated, we won't navigate automatically. We leave it to the user.
+    }
+  }, [quiz]);
 
-  // Show error message if quiz generation failed
-  if (error) {
-    return (
-      <MainScreen title="Error">
-        <ErrorMessage variant="danger">{error}</ErrorMessage>
-      </MainScreen>
-    );
-  }
-
-  // Show success message when quiz is generated
-  if (quiz) {
-    return (
-      <MainScreen title="Quiz Generated Successfully!">
-        <p>Your quiz has been successfully created.</p>
-        <h4>{quiz.title}</h4>
-        <div>
-          {quiz.questions && quiz.questions.length > 0 ? (
-            <ul>
-              {quiz.questions.map((question, index) => (
-                <li key={index}>
-                  <strong>{question.question}</strong>
-                  <ul>
-                    {question.options.map((option, idx) => (
-                      <li key={idx}>{option}</li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No questions available for this quiz.</p>
-          )}
-        </div>
-        <Link to={`/studynote/${studyNoteId}`}>
-          <Button variant="primary" size="sm">
-            Back to Study Note
-          </Button>
-        </Link>
-      </MainScreen>
-    );
-  }
-
-  // If quiz is not available (unexpected state)
   return (
-    <MainScreen title="No Quiz Available">
-      <p>Something went wrong. Please try again later.</p>
+    <MainScreen title="Quiz Confirmation">
+      <Container>
+        {loading && <Loading />} {/* Show loading spinner when quiz is being generated */}
+        {error && <ErrorMessage variant="danger">{error}</ErrorMessage>} {/* Show error message if there's an error */}
+
+        {!loading && !error && quiz && (
+          <Alert variant="success">
+            <h4>Quiz has been successfully generated!</h4>
+            <p>You can now go back to your study note.</p>
+            <Button
+              variant="primary"
+              onClick={() => navigate(`/studynote/${studyNoteId}`)}  // Allow user to navigate manually
+            >
+              Back to Study Note
+            </Button>
+          </Alert>
+        )}
+      </Container>
     </MainScreen>
   );
 };

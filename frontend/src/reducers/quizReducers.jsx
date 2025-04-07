@@ -1,7 +1,5 @@
 import {
-  GENERATE_QUIZ_REQUEST,
-  GENERATE_QUIZ_SUCCESS,
-  GENERATE_QUIZ_FAIL,
+  GENERATE_QUIZ_REQUEST, GENERATE_QUIZ_SUCCESS, GENERATE_QUIZ_FAIL,
   GET_QUIZZES_REQUEST,
   GET_QUIZZES_SUCCESS,
   GET_QUIZZES_FAIL,
@@ -12,6 +10,7 @@ import {
   GET_QUIZ_RESULT_SUCCESS,
   GET_QUIZ_RESULT_FAIL,
 } from "../constants/quizConstants";
+
 
 const initialState = {
   quiz: null,
@@ -32,70 +31,43 @@ export const quizGenerateReducer = (state = initialState, action) => {
   }
 };
 
-
-// ✅ Initial state for quiz details (retrieving quizzes by study note)
-const initialQuizDetailsState = {
-  loading: false,
-  quizzes: [],
-  error: null,
-};
-
-// ✅ Reducer for retrieving quizzes by study note ID
-export const quizDetailsReducer = (state = initialQuizDetailsState, action) => {
+// Reducer for getting quizzes by study note ID
+export const quizListReducer = (state = { quizzes: [] }, action) => {
   switch (action.type) {
     case GET_QUIZZES_REQUEST:
-      return { ...state, loading: true, error: null }; // Clear error when making a new request
+      return { loading: true };
     case GET_QUIZZES_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        quizzes: Array.isArray(action.payload) ? action.payload : state.quizzes, // Store fetched quizzes
-        error: null,
-      };
+      return { loading: false, quizzes: action.payload };
     case GET_QUIZZES_FAIL:
-      return { ...state, loading: false, error: action.payload || "Error fetching quizzes." };
+      return { loading: false, error: action.payload };
     default:
       return state;
   }
 };
 
-// ✅ Initial state for submitting a quiz
-const initialSubmitState = {
-  loading: false,
-  result: null,
-  error: null,
-};
-
-// ✅ Reducer for submitting quiz answers
-export const quizSubmitReducer = (state = initialSubmitState, action) => {
+// Reducer for submitting quiz answers
+export const quizSubmitReducer = (state = {}, action) => {
   switch (action.type) {
     case SUBMIT_QUIZ_REQUEST:
-      return { ...state, loading: true, error: null }; // Reset error on new request
+      return { loading: true };
     case SUBMIT_QUIZ_SUCCESS:
-      return { ...state, loading: false, result: action.payload, error: null }; // Store result
+      return { loading: false, result: action.payload };
     case SUBMIT_QUIZ_FAIL:
-      return { ...state, loading: false, error: action.payload || "Error submitting quiz." };
+      return { loading: false, error: action.payload };
     default:
       return state;
   }
 };
 
-// ✅ Initial state for quiz results
-const initialQuizResultState = {
-  loading: false,
-  result: null,
-  error: null,
-};
-
-// ✅ Reducer for retrieving quiz results
-export const quizResultReducer = (state = initialQuizResultState, action) => {
+// Reducer for getting quiz results
+export const quizResultReducer = (state = {}, action) => {
   switch (action.type) {
     case GET_QUIZ_RESULT_REQUEST:
-      return { ...state, loading: true, error: null }; // Reset error on new request
+      return { loading: true };
     case GET_QUIZ_RESULT_SUCCESS:
-      return { ...state, loading: false, result: action.payload, error: null }; // Store quiz result
+      return { loading: false, result: action.payload };
     case GET_QUIZ_RESULT_FAIL:
-      return { ...state, loading: false, error: action.payload || "Error fetching quiz results." };
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

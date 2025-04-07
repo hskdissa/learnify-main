@@ -6,6 +6,7 @@ const userScoreSchema = new mongoose.Schema({
     ref: "User",
     unique: true,
     required: true,
+    index: true, // Improves query performance
   },
   totalPoints: {
     type: Number,
@@ -15,8 +16,11 @@ const userScoreSchema = new mongoose.Schema({
     type: Number,
     default: 1,
   },
-  badges: [String],
-});
+  badges: {
+    type: [String],
+    default: [], // Ensures badges always have a default value
+  },
+}, { timestamps: true }); // Adds createdAt & updatedAt fields
 
 const UserScore = mongoose.model("UserScore", userScoreSchema);
 module.exports = UserScore;

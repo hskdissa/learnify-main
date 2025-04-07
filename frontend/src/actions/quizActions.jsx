@@ -1,8 +1,6 @@
 import axios from "axios";
 import {
-  GENERATE_QUIZ_REQUEST,
-  GENERATE_QUIZ_SUCCESS,
-  GENERATE_QUIZ_FAIL,
+  GENERATE_QUIZ_REQUEST, GENERATE_QUIZ_SUCCESS, GENERATE_QUIZ_FAIL,
   GET_QUIZZES_REQUEST,
   GET_QUIZZES_SUCCESS,
   GET_QUIZZES_FAIL,
@@ -16,83 +14,40 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL; // Adjust this based on your environment
 
+// Helper function for error handling
+const handleError = (error, dispatch, failType) => {
+  console.error("Error:", error.response?.data || error.message);
+  const message = error.response?.data?.message || error.message || "An error occurred";
+  dispatch({ type: failType, payload: message });
+};
 
-// Action to generate quiz based on study note
+// Your action code here
 export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
   try {
     dispatch({ type: GENERATE_QUIZ_REQUEST });
 
-    // Log the studyNoteId to make sure it's correctly passed
-    console.log('Generating quiz for study note ID:', studyNoteId);
-
-    // Get user info from Redux state to retrieve the auth token
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    // Check if user info is available and log it
-    if (!userInfo) {
-      throw new Error("User is not logged in");
-    }
+    const { userLogin: { userInfo } } = getState();
 
     const config = {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`, // Attach token in header
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
       },
     };
 
-    // Make the API call to generate the quiz
     const { data } = await axios.post(
       `${API_URL}/api/quizzes/generate`,
       { studyNoteId },
       config
     );
 
-    // Log the data returned from the API to check if it's correct
-    console.log('Quiz Generated:', data);
+    dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: data });
 
-    // Dispatch success action with the generated quiz data
-    dispatch({
-      type: GENERATE_QUIZ_SUCCESS,
-      payload: data, // This is the generated quiz
-    });
   } catch (error) {
-    // Log the error response to debug
-    console.error('Error generating quiz:', error.response?.data || error.message);
-
-    // Create a custom error message
-    const message =
-      error.response?.data?.message || error.message || 'Quiz generation failed. Please try again later.';
-
-    // Dispatch failure action with the error message
     dispatch({
       type: GENERATE_QUIZ_FAIL,
-      payload: message,
+      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
     });
-  }
-};
-
-
-
-
-
-
-// Action to submit quiz answers
-export const submitQuizAction = (quizId, answers) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: SUBMIT_QUIZ_REQUEST });
-    const { userLogin: { userInfo } } = getState(); // Ensure this matches the shape of your state
-
-    const { data } = await axios.post(`${API_URL}/api/quizzes/submit`, { quizId, answers }, {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,  // Use the token from userInfo
-      },
-    });
-
-    dispatch({ type: SUBMIT_QUIZ_SUCCESS, payload: data });
-  } catch (error) {
-    handleError(error, dispatch, SUBMIT_QUIZ_FAIL); // Using the helper function
   }
 };
 
@@ -103,20 +58,53 @@ export const getQuizzesByStudyNoteIdAction = (studyNoteId) => async (dispatch, g
 
     const { userLogin: { userInfo } } = getState();
 
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
     const { data } = await axios.get(
       `${API_URL}/api/quizzes/studynote/${studyNoteId}`,
-      { headers: { Authorization: `Bearer ${userInfo.token}` } }
+      config
     );
 
     dispatch({ type: GET_QUIZZES_SUCCESS, payload: data });
+
+    return data;
   } catch (error) {
-    console.error("Error fetching quizzes:", error.response?.data || error.message);
-    dispatch({ type: GET_QUIZZES_FAIL, payload: "No quizzes found for this study note." });
+    handleError(error, dispatch, GET_QUIZZES_FAIL);
+    throw error; // Ensure we throw the error for the calling component to handle
   }
 };
 
+// Action to submit quiz answers
+export const submitQuizAction = (quizId, answers) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: SUBMIT_QUIZ_REQUEST });
 
-// Action to get the quiz result
+    const { userLogin: { userInfo } } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `${API_URL}/api/quizzes/submit`,
+      { quizId, answers },
+      config
+    );
+
+    dispatch({ type: SUBMIT_QUIZ_SUCCESS, payload: data });
+  } catch (error) {
+    handleError(error, dispatch, SUBMIT_QUIZ_FAIL);
+  }
+};
+
+// Action to get the result of a quiz
 export const getQuizResultAction = (quizId) => async (dispatch) => {
   try {
     dispatch({ type: GET_QUIZ_RESULT_REQUEST });
@@ -125,6 +113,6 @@ export const getQuizResultAction = (quizId) => async (dispatch) => {
 
     dispatch({ type: GET_QUIZ_RESULT_SUCCESS, payload: data });
   } catch (error) {
-    handleError(error, dispatch, GET_QUIZ_RESULT_FAIL); // Using the helper function
+    handleError(error, dispatch, GET_QUIZ_RESULT_FAIL);
   }
 };
