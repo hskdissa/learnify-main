@@ -25,23 +25,20 @@ const SingleQuiz = () => {
     const { loading, error, quiz } = quizDetails;
   
     useEffect(() => {
-        console.log("studyNoteId:", studyNoteId);
-      
+        console.log("Fetching quiz for studyNoteId:", studyNoteId, "and quizId:", quizId);
+  
         if (studyNoteId && quizId) {
-          dispatch(getQuizByIdAction(studyNoteId, quizId));
+            dispatch(getQuizByIdAction(studyNoteId, quizId));
         } else {
-          console.error("Missing studyNoteId or quizId");
+            console.error("Missing studyNoteId or quizId");
         }
-      }, [dispatch, studyNoteId, quizId]);
-
-      console.log("Quiz Data: ", quiz);
-
+    }, [dispatch, studyNoteId, quizId]);
   
     const handleAnswerChange = (questionId, option) => {
-      setAnswers((prevAnswers) => ({
-        ...prevAnswers,
-        [questionId]: option,
-      }));
+        setAnswers((prevAnswers) => ({
+            ...prevAnswers,
+            [questionId]: option,
+        }));
     };
   
 
@@ -52,7 +49,7 @@ const SingleQuiz = () => {
             // Send answers to the backend for submission
             const response = await dispatch(submitQuizAction(studyNoteId, quizId, answers));
     
-            console.log("Response from backend:", response);
+            console.log("Response from backend:", response); // Log the response here
     
             // Check if the response contains the expected structure
             if (response && response.score && response.points !== undefined && Array.isArray(response.feedback)) {
@@ -67,9 +64,9 @@ const SingleQuiz = () => {
                 // Proceed with navigating to the result page
                 navigate(`/quizzes/studynote/${studyNoteId}/quiz/${quizId}/submit`, {
                     state: {
-                        score: score,   // e.g. "3/6" or "score/totalQuestions"
-                        points: points, // Total points achieved
-                        feedback: feedback, // Feedback array
+                        score: score,
+                        points: points,
+                        feedback: feedback,
                     },
                 });
             } else {
@@ -80,11 +77,6 @@ const SingleQuiz = () => {
         }
     };
     
-    
-    
-    
-    
-      
   
     return (
       <MainScreen title={`Quiz: ${quiz?.title || ''}`}>
@@ -94,7 +86,7 @@ const SingleQuiz = () => {
           ) : error ? (
             <ErrorMessage variant="danger">{error}</ErrorMessage>
           ) : (
-            quiz && quiz.questions ? (
+            quiz && quiz.questions && Array.isArray(quiz.questions) && quiz.questions.length > 0 ? (
               <div>
                 <Card style={{ marginBottom: '20px' }}>
                   <Card.Body>
@@ -102,7 +94,7 @@ const SingleQuiz = () => {
                     <p>{quiz.description}</p>
                     {quiz.questions.map((question, index) => (
                       <div key={question._id} style={{ marginBottom: '15px' }}>
-                        <h5>{index + 1}. {question.text}</h5>
+                        <h5>{index + 1}. {question.question}</h5> {/* Changed to question.question */}
                         <Form>
                           {question.options.map((option, i) => (
                             <Form.Check
@@ -129,7 +121,7 @@ const SingleQuiz = () => {
                 )}
               </div>
             ) : (
-              <ErrorMessage variant="danger">No quiz found or questions missing.</ErrorMessage>
+              <ErrorMessage variant="danger">No questions available in the quiz.</ErrorMessage>
             )
           )}
         </Container>
