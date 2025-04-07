@@ -17,28 +17,57 @@ const QuizConfirmation = () => {
   const quizGeneration = useSelector((state) => state.quizGenerateReducer);
   const { loading, error, quiz } = quizGeneration;
 
-  useEffect(() => {
-    // If no studyNoteId, navigate back to the dashboard
-    if (!studyNoteId) {
-      navigate('/dashboard');
-    } else if (!quiz) {  // Check if quiz is not already generated
-      // Ensure the quiz generation is triggered only once
-      const alreadyGenerated = localStorage.getItem(`quizGeneratedFor_${studyNoteId}`);
-      if (!alreadyGenerated) {
-        console.log("Starting quiz generation...");
-        // Dispatch the action to generate the quiz
-        dispatch(generateQuizAction(studyNoteId));
-        localStorage.setItem(`quizGeneratedFor_${studyNoteId}`, 'true');  // Mark as generated in local storage
+  // Debugging: Log the raw value of 'quizzes' in localStorage
+  const storedQuizzes = localStorage.getItem('quizzes');
+  console.log("Stored quizzes from localStorage:", storedQuizzes);
+
+  // Try to fetch quizzes from localStorage and handle possible invalid format
+  let updatedQuizzes = [];
+  try {
+    if (storedQuizzes) {
+      updatedQuizzes = JSON.parse(storedQuizzes);
+      if (!Array.isArray(updatedQuizzes)) {
+        console.error("Expected quizzes to be an array, but it's not. Resetting to empty array.");
+        updatedQuizzes = [];
       }
+    } else {
+      console.warn("No quizzes found in localStorage. Initializing empty array.");
+      updatedQuizzes = [];
     }
-  }, [dispatch, studyNoteId, navigate, quiz]);  // Add quiz to dependency array to track changes
+  } catch (error) {
+    console.error("Error parsing quizzes from localStorage:", error);
+    updatedQuizzes = [];
+  }
+
+  // Ensure quizzes are always an array
+  if (!Array.isArray(updatedQuizzes)) {
+    updatedQuizzes = [];
+  }
 
   useEffect(() => {
-    if (quiz && quiz._id) {
-      console.log("Quiz successfully generated:", quiz); // Log the generated quiz details
-      // After the quiz is generated, we won't navigate automatically. We leave it to the user.
+    if (!studyNoteId) {
+      navigate('/dashboard');
+      return;
     }
-  }, [quiz]);
+  
+    const alreadyGenerated = localStorage.getItem(`quizGeneratedFor_${studyNoteId}`);
+    const storedQuiz = localStorage.getItem(`generatedQuiz_${studyNoteId}`);
+  
+    if (storedQuiz) {
+      console.log("Retrieved quiz from localStorage:", JSON.parse(storedQuiz));
+      dispatch({ type: "QUIZ_GENERATED_SUCCESS", payload: JSON.parse(storedQuiz) });
+    } else if (!alreadyGenerated) {
+      console.log("Starting quiz generation...");
+      dispatch(generateQuizAction(studyNoteId));
+      localStorage.setItem(`quizGeneratedFor_${studyNoteId}`, 'true');
+    }
+  }, [dispatch, studyNoteId, navigate]);
+  
+
+  // If quiz is generated, navigate to the study note page
+  const handleBackToStudyNote = () => {
+    navigate(`/studynote/${studyNoteId}`);
+  };
 
   return (
     <MainScreen title="Quiz Confirmation">
@@ -52,7 +81,7 @@ const QuizConfirmation = () => {
             <p>You can now go back to your study note.</p>
             <Button
               variant="primary"
-              onClick={() => navigate(`/studynote/${studyNoteId}`)}  // Allow user to navigate manually
+              onClick={handleBackToStudyNote}  // Allow user to navigate manually
             >
               Back to Study Note
             </Button>

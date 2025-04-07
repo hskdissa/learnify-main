@@ -34,7 +34,9 @@ const quizSchema = mongoose.Schema(
     studyNote: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'StudyNote',
+      required: true, // Ensure every quiz has an associated study note
     },
+    
     score: {
       type: Number,
       default: 0, // Stores quiz score if needed

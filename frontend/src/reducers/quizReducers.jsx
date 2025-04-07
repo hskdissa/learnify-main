@@ -1,8 +1,8 @@
 import {
   GENERATE_QUIZ_REQUEST, GENERATE_QUIZ_SUCCESS, GENERATE_QUIZ_FAIL,
-  GET_QUIZZES_REQUEST,
-  GET_QUIZZES_SUCCESS,
-  GET_QUIZZES_FAIL,
+  QUIZ_LIST_REQUEST,
+  QUIZ_LIST_SUCCESS,
+  QUIZ_LIST_FAIL,
   SUBMIT_QUIZ_REQUEST,
   SUBMIT_QUIZ_SUCCESS,
   SUBMIT_QUIZ_FAIL,
@@ -13,9 +13,9 @@ import {
 
 
 const initialState = {
-  quiz: null,
   loading: false,
   error: null,
+  quiz: null,
 };
 
 export const quizGenerateReducer = (state = initialState, action) => {
@@ -31,19 +31,21 @@ export const quizGenerateReducer = (state = initialState, action) => {
   }
 };
 
-// Reducer for getting quizzes by study note ID
+
 export const quizListReducer = (state = { quizzes: [] }, action) => {
   switch (action.type) {
-    case GET_QUIZZES_REQUEST:
-      return { loading: true };
-    case GET_QUIZZES_SUCCESS:
+    case QUIZ_LIST_REQUEST:
+      return { loading: true, quizzes: [] };
+    case QUIZ_LIST_SUCCESS:
       return { loading: false, quizzes: action.payload };
-    case GET_QUIZZES_FAIL:
+    case QUIZ_LIST_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;
   }
 };
+
+
 
 // Reducer for submitting quiz answers
 export const quizSubmitReducer = (state = {}, action) => {

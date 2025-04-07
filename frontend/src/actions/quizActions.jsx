@@ -1,9 +1,9 @@
 import axios from "axios";
 import {
   GENERATE_QUIZ_REQUEST, GENERATE_QUIZ_SUCCESS, GENERATE_QUIZ_FAIL,
-  GET_QUIZZES_REQUEST,
-  GET_QUIZZES_SUCCESS,
-  GET_QUIZZES_FAIL,
+  QUIZ_LIST_REQUEST,
+  QUIZ_LIST_SUCCESS,
+  QUIZ_LIST_FAIL,
   SUBMIT_QUIZ_REQUEST,
   SUBMIT_QUIZ_SUCCESS,
   SUBMIT_QUIZ_FAIL,
@@ -54,30 +54,35 @@ export const generateQuizAction = (studyNoteId) => async (dispatch, getState) =>
 // Action to get quizzes by study note ID
 export const getQuizzesByStudyNoteIdAction = (studyNoteId) => async (dispatch, getState) => {
   try {
-    dispatch({ type: GET_QUIZZES_REQUEST });
+    dispatch({ type: QUIZ_LIST_REQUEST });
 
-    const { userLogin: { userInfo } } = getState();
+    const {
+      userLogin: { userInfo },
+    } = getState();
 
     const config = {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
 
-    const { data } = await axios.get(
-      `${API_URL}/api/quizzes/studynote/${studyNoteId}`,
-      config
-    );
+    const { data } = await axios.get(`${API_URL}/api/quizzes/studynote/${studyNoteId}`, config);
 
-    dispatch({ type: GET_QUIZZES_SUCCESS, payload: data });
-
-    return data;
+    dispatch({
+      type: QUIZ_LIST_SUCCESS,
+      payload: data, // Assuming the data is an array of quizzes
+    });
   } catch (error) {
-    handleError(error, dispatch, GET_QUIZZES_FAIL);
-    throw error; // Ensure we throw the error for the calling component to handle
+    const message =
+      error.response?.data?.message || error.message || 'Failed to fetch quizzes.';
+    dispatch({
+      type: QUIZ_LIST_FAIL,
+      payload: message,
+    });
   }
 };
+
 
 // Action to submit quiz answers
 export const submitQuizAction = (quizId, answers) => async (dispatch, getState) => {

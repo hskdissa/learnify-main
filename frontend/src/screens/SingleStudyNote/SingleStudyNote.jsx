@@ -34,12 +34,7 @@ const SingleStudyNote = () => {
     dispatch(getStudyNoteById(id));
   }, [dispatch, id]);
 
-  // Fetch quizzes related to this study note
-  useEffect(() => {
-    if (studyNote && studyNote._id) {
-      dispatch(getQuizzesByStudyNoteIdAction(studyNote._id)); // Fetch quizzes by study note ID
-    }
-  }, [dispatch, studyNote]);
+
 
   // Download PDF functionality
   const downloadPDF = () => {
@@ -83,13 +78,19 @@ const SingleStudyNote = () => {
     }
   };
   
-
-  // Handle Start Quiz
-  const handleStartQuiz = () => {
-    if (quiz && quiz._id) {
-      navigate(`/quizzes/${studyNote._id}/${quiz._id}`); // Navigate to QuizDisplay with quiz ID
+  useEffect(() => {
+    if (quiz) {
+      console.log("Generated quiz:", quiz);  // Check the quiz object after generation
     }
+  }, [quiz]);
+  
+
+  
+  // Navigate to view flashcards
+  const handleStartQuiz = () => {
+    navigate(`/quizzes/${studyNote._id}`);
   };
+  
 
   return (
     <MainScreen title={`Study Note: ${studyNote ? studyNote.title : "Loading..."}`}>
@@ -151,7 +152,7 @@ const SingleStudyNote = () => {
                 onClick={handleGenerateQuiz}
                 className="mt-3 ms-3"
                 variant="primary"
-                disabled={quizLoading || quiz || quizError || !studyNote} // Disable when quiz is loading or already exists
+               
               >
                 Generate Quiz
               </Button>
@@ -162,7 +163,7 @@ const SingleStudyNote = () => {
                   onClick={handleStartQuiz}
                   className="mt-3 ms-3"
                   variant="primary"
-                  disabled={!quiz || quizLoading} // Enable only if quiz exists and not loading
+                  
                 >
                   Start Quiz
                 </Button>
@@ -189,3 +190,4 @@ const SingleStudyNote = () => {
 };
 
 export default SingleStudyNote;
+

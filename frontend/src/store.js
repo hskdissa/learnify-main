@@ -40,7 +40,7 @@ const rootReducer = combineReducers({
   flashcardGenerate: flashcardGenerateReducer,
 
   quizGenerateReducer: quizGenerateReducer,
-  quizListReducer: quizListReducer,
+  quizList: quizListReducer,
   quizSubmitReducer: quizSubmitReducer,
   quizResultReducer: quizResultReducer,
 

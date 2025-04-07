@@ -1,132 +1,116 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card, Container } from "react-bootstrap";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getQuizzesByStudyNoteIdAction } from "../../actions/quizActions"; // Import the correct action
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { getQuizzesByStudyNoteIdAction } from "../../actions/quizActions"; // Assuming you have the action for quizzes
+import { Accordion, Card, Button, Container, Badge } from "react-bootstrap";
+import Loading from "../../components/Loading";
+import ErrorMessage from "../../components/ErrorMessage";
+import MainScreen from "../../components/MainScreen";
 
 const QuizDisplay = () => {
-  const { studyNoteId, quizId } = useParams(); // Get the study note ID and quiz ID from the URL
+  const { studyNoteId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Redux state for quiz details
-  const quizDetails = useSelector((state) => state.quizDetails); // Assuming you have a reducer for quiz details
-  const { loading, error, quiz } = quizDetails;
-
-  // Local state for controlling quiz flow
-  const [quizStarted, setQuizStarted] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState([]); // Store answers
+  const quizList = useSelector((state) => state.quizList);
+  const { loading, error, quizzes } = quizList;
 
   useEffect(() => {
-    // Dispatch action to fetch the quiz details for the specific study note and quiz ID when the component mounts
-    dispatch(getQuizzesByStudyNoteIdAction(studyNoteId)); // Use studyNoteId instead of quizId, since only one quiz exists per study note
-  }, [dispatch, studyNoteId]); // We depend on studyNoteId as the quiz data should be associated with it
-
-  useEffect(() => {
-    if (quiz && quiz._id !== quizId) {
-      navigate(`/quizzes/${studyNoteId}/${quizId}`);
+    if (studyNoteId) {
+      dispatch(getQuizzesByStudyNoteIdAction(studyNoteId));
     }
-  }, [quiz, quizId, navigate, studyNoteId]);
+  }, [dispatch, studyNoteId]);
 
-  // Handle Start Quiz button
-  const handleStartQuiz = () => {
-    setQuizStarted(true);
+  // Delete Handler (if you have delete functionality for quizzes)
+  const deleteHandler = (quizId) => {
+    // Logic to delete quiz (integrate actual delete logic here)
+    console.log(`Deleting quiz with ID: ${quizId}`);
   };
-
-  // Handle next question
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < quiz.questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  // Handle previous question
-  const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  // Handle selecting an answer
-  const handleAnswerSelect = (answer) => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[currentQuestionIndex] = answer;
-    setAnswers(updatedAnswers);
-  };
-
-  // Render quiz questions
-  const renderQuiz = () => {
-    if (quiz && quiz.questions && quiz.questions.length > 0) {
-      const currentQuestion = quiz.questions[currentQuestionIndex];
-
-      return (
-        <Card>
-          <Card.Body>
-            <h5>{currentQuestion.text}</h5>
-            <div>
-              {currentQuestion.options.map((option, index) => (
-                <Button
-                  key={index}
-                  variant="outline-primary"
-                  className="m-1"
-                  onClick={() => handleAnswerSelect(option)}
-                >
-                  {option}
-                </Button>
-              ))}
-            </div>
-          </Card.Body>
-          <Card.Footer>
-            <Button
-              variant="secondary"
-              onClick={handlePreviousQuestion}
-              disabled={currentQuestionIndex === 0}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleNextQuestion}
-              disabled={currentQuestionIndex === quiz.questions.length - 1}
-            >
-              Next
-            </Button>
-          </Card.Footer>
-        </Card>
-      );
-    }
-    return null;
-  };
-
-  // Render the start quiz button
-  const renderStartQuizButton = () => {
-    return (
-      <Card>
-        <Card.Body>
-          <h3>Click the button below to start the quiz</h3>
-          <Button onClick={handleStartQuiz} variant="primary">
-            Start Quiz
-          </Button>
-        </Card.Body>
-      </Card>
-    );
-  };
-
-  // If no quiz data is loaded or there's an error, display a message
-  if (loading) {
-    return <div>Loading quiz...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
-    <Container>
-      <h1>Quiz for Study Note {studyNoteId}</h1>
-      {!quizStarted ? renderStartQuizButton() : renderQuiz()}
-    </Container>
+    <MainScreen title={`Quizzes for Study Note ${studyNoteId}`}>
+      <Container style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
+        <Button 
+          onClick={() => navigate(`/studynote/${studyNoteId}`)} // Navigate back to the study note page
+          variant="secondary" 
+          className="mb-4"
+        >
+          Back
+        </Button>
+
+        {loading ? (
+          <Loading />
+        ) : error ? (
+          <ErrorMessage variant="danger">{error}</ErrorMessage>
+        ) : (
+          quizzes && quizzes.length > 0 && (
+            <div>
+              <h3>Quizzes for Study Note: {studyNoteId}</h3>
+
+              <Accordion defaultActiveKey="0">
+                {/* Loop through each quiz */}
+                {[...quizzes].reverse().map((quiz) => (
+                  <Accordion.Item key={quiz._id} eventKey={quiz._id}>
+                    <Card style={{ margin: 10 }}>
+                      <Card.Header style={{ display: "flex" }}>
+                        <span
+                          style={{
+                            color: "black",
+                            textDecoration: "none",
+                            flex: 1,
+                            cursor: "pointer",
+                            alignSelf: "center",
+                            fontSize: 18,
+                          }}
+                        >
+                          <Accordion.Button as="div">{quiz.title}</Accordion.Button>
+                        </span>
+                        <div>
+                          <Link to={`/quiz/${quiz._id}`}>
+                            <Button>Start Quiz</Button>
+                          </Link>
+
+                          {/* Optional Delete Button */}
+                          <Button
+                            variant="danger"
+                            className="mx-2"
+                            onClick={() => deleteHandler(quiz._id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </Card.Header>
+
+                      <Accordion.Body>
+                        <Card.Body>
+                          {/* Display quiz details */}
+                          <h4>
+                            <Badge bg="success">Category - {quiz.category}</Badge>
+                          </h4>
+
+                          {quiz.questions.map((question, index) => (
+                            <div key={question._id} className="mb-3">
+                              <strong>Q{index + 1}: </strong>{question.text}
+                              {/* Display question options */}
+                              {question.options && question.options.map((option, i) => (
+                                <div key={i}>
+                                  <input type="radio" name={`question-${index}`} id={`option-${i}`} />
+                                  <label htmlFor={`option-${i}`}>{option}</label>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </Card.Body>
+                      </Accordion.Body>
+                    </Card>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            </div>
+          )
+        )}
+      </Container>
+    </MainScreen>
   );
 };
 

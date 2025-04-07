@@ -45,7 +45,9 @@ const App = () => (
 
         <Route path="/quizzes/generate" element={<QuizConfirmation />} /> 
         <Route path="/quiz/generate" element={<QuizGenerate />} />
-        <Route path="/quiz/display/:quizId" element={<QuizDisplay />} />
+        <Route path="/quizzes/:studyNoteId" element={<QuizDisplay />} />
+
+
         
         <Route path="/flashcards/generate" element={<FlashcardDisplay />} />
 

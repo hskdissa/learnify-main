@@ -3,6 +3,7 @@ const OpenAI = require("openai");
 const Quiz = require('../models/quizModel');
 const StudyNote = require('../models/studyNoteModel');
 const UserScore = require("../models/userScoreModel");
+const mongoose = require('mongoose'); 
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -96,28 +97,57 @@ const generateQuiz = asyncHandler(async (req, res) => {
 
 
 
-// Delete a quiz by ID
-const deleteQuiz = asyncHandler(async (req, res) => {
-    const quiz = await Quiz.findOne({ _id: req.params.id, user: req.user._id });
-
-    if (!quiz) {
-        return res.status(404).json({ message: "Quiz not found." });
-    }
-
-    await quiz.deleteOne();
-    res.status(200).json({ message: "Quiz deleted successfully." });
-});
 
 // Get all quizzes for a specific study note ID
 const getQuizzesByStudyNoteId = asyncHandler(async (req, res) => {
     const { studyNoteId } = req.params;
-    const quizzes = await Quiz.find({ studyNote: studyNoteId });
+    
+    if (!studyNoteId) {
+        return res.status(400).json({ message: "Study Note ID is required." });
+    }
+
+    // Use `find()` to retrieve all quizzes related to this study note ID
+    const quizzes = await Quiz.find({ studyNote: studyNoteId }).sort({ createdAt: -1 });
 
     if (!quizzes || quizzes.length === 0) {
         return res.status(404).json({ message: 'No quizzes found for this study note.' });
     }
 
     res.status(200).json(quizzes);
+});
+
+
+  
+// Get a specific quiz by ID
+const getQuizById = asyncHandler(async (req, res) => {
+    const { quizId } = req.params;
+
+    // Fetch the quiz from the database by quizId
+    const quiz = await Quiz.findById(quizId).populate("studyNote", "title");
+
+    if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found." });
+    }
+
+    // Return the quiz data if found
+    res.status(200).json(quiz);
+});
+
+
+// Delete a single quiz by ID
+const deleteQuiz = asyncHandler(async (req, res) => {
+    // Find the quiz by ID and ensure it belongs to the logged-in user
+    const quiz = await Quiz.findOne({ _id: req.params.quizId, user: req.user._id });
+
+    if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found." });
+    }
+
+    // Delete the quiz
+    await quiz.deleteOne();
+
+    // Send a success response
+    res.status(200).json({ message: "Quiz deleted successfully." });
 });
 
 
@@ -187,4 +217,5 @@ const submitQuiz = asyncHandler(async (req, res) => {
     });
 });
 
-module.exports = { generateQuiz, deleteQuiz, getQuizzesByStudyNoteId, submitQuiz };
+module.exports = { generateQuiz, deleteQuiz, getQuizzesByStudyNoteId, getQuizById, submitQuiz };
+
