@@ -10,6 +10,9 @@ import {
   GET_QUIZ_RESULT_REQUEST,
   GET_QUIZ_RESULT_SUCCESS,
   GET_QUIZ_RESULT_FAIL,
+  QUIZ_DISPLAY_REQUEST,
+  QUIZ_DISPLAY_SUCCESS,
+  QUIZ_DISPLAY_FAIL,
 } from "../constants/quizConstants";
 
 const API_URL = import.meta.env.VITE_API_URL; // Adjust this based on your environment
@@ -84,12 +87,46 @@ export const getQuizzesByStudyNoteIdAction = (studyNoteId) => async (dispatch, g
 };
 
 
+export const getQuizByIdAction = (studyNoteId, quizId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: QUIZ_DISPLAY_REQUEST });
+
+    const { userLogin: { userInfo } } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `${API_URL}/api/quizzes/studynote/${studyNoteId}/quiz/${quizId}`, 
+      config
+    );
+
+    dispatch({
+      type: QUIZ_DISPLAY_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to fetch quiz.";
+    dispatch({
+      type: QUIZ_DISPLAY_FAIL,
+      payload: message,
+    });
+  }
+};
+
+
+
+
 // Action to submit quiz answers
-export const submitQuizAction = (quizId, answers) => async (dispatch, getState) => {
+export const submitQuizAction = (studyNoteId, quizId, answers) => async (dispatch, getState) => {
   try {
     dispatch({ type: SUBMIT_QUIZ_REQUEST });
 
-    const { userLogin: { userInfo } } = getState();
+    const { userLogin: { userInfo } } = getState(); // Get user info from the store
 
     const config = {
       headers: {
@@ -97,27 +134,56 @@ export const submitQuizAction = (quizId, answers) => async (dispatch, getState) 
       },
     };
 
+    // Correct API call with full URL
     const { data } = await axios.post(
-      `${API_URL}/api/quizzes/submit`,
-      { quizId, answers },
+      `${API_URL}/api/quizzes/studynote/${studyNoteId}/quiz/${quizId}/submit`,  // Corrected URL format
+      { answers },
       config
     );
 
-    dispatch({ type: SUBMIT_QUIZ_SUCCESS, payload: data });
+    // Dispatch success with the response data
+    dispatch({
+      type: SUBMIT_QUIZ_SUCCESS,
+      payload: data, // Contains score, points, and feedback
+    });
+
+    return data; // Return data for use in the component (like passing score and feedback to result page)
+
   } catch (error) {
     handleError(error, dispatch, SUBMIT_QUIZ_FAIL);
   }
 };
 
-// Action to get the result of a quiz
-export const getQuizResultAction = (quizId) => async (dispatch) => {
+
+/*
+// Action to get the result of a quiz after submission
+export const getQuizResultAction = (studyNoteId, quizId) => async (dispatch, getState) => {
   try {
     dispatch({ type: GET_QUIZ_RESULT_REQUEST });
 
-    const { data } = await axios.get(`${API_URL}/api/quizzes/result/${quizId}`);
+    const { userLogin: { userInfo } } = getState(); // Get user info from the store
 
-    dispatch({ type: GET_QUIZ_RESULT_SUCCESS, payload: data });
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    // Fetching the quiz result from the backend
+    const { data } = await axios.get(
+      `${API_URL}/api/quizzes/${studyNoteId}/quiz/${quizId}/result`, // Adjusted API path
+      config
+    );
+
+    // Dispatch success with the result data
+    dispatch({
+      type: GET_QUIZ_RESULT_SUCCESS,
+      payload: data, // Contains the score, feedback, and possibly other quiz result data
+    });
+
+
   } catch (error) {
     handleError(error, dispatch, GET_QUIZ_RESULT_FAIL);
   }
 };
+*/

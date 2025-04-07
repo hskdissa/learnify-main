@@ -8,9 +8,12 @@ import ErrorMessage from "../../components/ErrorMessage";
 import MainScreen from "../../components/MainScreen";
 
 const QuizDisplay = () => {
-  const { studyNoteId } = useParams();
+  const { studyNoteId, quizId } = useParams();
+  console.log("studyNoteId:", studyNoteId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  
 
   const quizList = useSelector((state) => state.quizList);
   const { loading, error, quizzes } = quizList;
@@ -45,7 +48,10 @@ const QuizDisplay = () => {
         ) : (
           quizzes && quizzes.length > 0 && (
             <div>
-              <h3>Quizzes for Study Note: {studyNoteId}</h3>
+
+
+
+              <h3>Quiz for Study Note: {studyNoteId}</h3>
 
               <Accordion defaultActiveKey="0">
                 {/* Loop through each quiz */}
@@ -66,9 +72,15 @@ const QuizDisplay = () => {
                           <Accordion.Button as="div">{quiz.title}</Accordion.Button>
                         </span>
                         <div>
-                          <Link to={`/quiz/${quiz._id}`}>
-                            <Button>Start Quiz</Button>
-                          </Link>
+                        {console.log("Quiz ID in Link:", quiz._id)}
+
+
+                        <Link to={`/quizzes/studynote/${studyNoteId}/quiz/${quiz._id}`}>
+                          <Button>Start Quiz</Button>
+                        </Link>
+
+
+
 
                           {/* Optional Delete Button */}
                           <Button
@@ -112,6 +124,7 @@ const QuizDisplay = () => {
       </Container>
     </MainScreen>
   );
+
 };
 
 export default QuizDisplay;

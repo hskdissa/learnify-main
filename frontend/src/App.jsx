@@ -17,6 +17,8 @@ import QuizGenerate from "./screens/Quiz/QuizGenerate"; // Path for QuizGenerate
 import QuizDisplay from "./screens/Quiz/QuizDisplay"; // Path for QuizDisplay page
 
 import QuizConfirmation from "./screens/Quiz/QuizConfirmation"; // Import the confirmation page
+import SingleQuiz from './screens/Quiz/SingleQuiz';
+import QuizResult from './screens/Quiz/QuizResult';
 
 
 
@@ -46,6 +48,13 @@ const App = () => (
         <Route path="/quizzes/generate" element={<QuizConfirmation />} /> 
         <Route path="/quiz/generate" element={<QuizGenerate />} />
         <Route path="/quizzes/:studyNoteId" element={<QuizDisplay />} />
+
+        <Route path="/quizzes/studynote/:studyNoteId/quiz/:quizId" element={<SingleQuiz />} />
+
+        <Route path="/quizzes/studynote/:studyNoteId/quiz/:quizId/submit" element={<QuizResult />} />
+
+
+        
 
 
         

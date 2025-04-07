@@ -17,11 +17,14 @@ router.post("/generate", protect, generateQuiz);
 router.get("/studynote/:studyNoteId", protect, getQuizzesByStudyNoteId);
 
 // Get a specific quiz by ID
-router.get("/:quizId", protect, getQuizById); // This is the new route
+//router.get("/:quizId", protect, getQuizById); // This is the new route
+
+router.get("/studynote/:studyNoteId/quiz/:quizId", protect, getQuizById);
 
 
 // Submit a quiz and calculate score
-router.post("/submit", protect, submitQuiz);
+router.post("/studynote/:studyNoteId/quiz/:quizId/submit", protect, submitQuiz);
+
 
 // Delete a quiz by its ID
 router.delete("/:quizId", protect, deleteQuiz);

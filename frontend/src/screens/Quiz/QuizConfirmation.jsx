@@ -17,6 +17,9 @@ const QuizConfirmation = () => {
   const quizGeneration = useSelector((state) => state.quizGenerateReducer);
   const { loading, error, quiz } = quizGeneration;
 
+  console.log('Quiz state:', quiz);
+
+
   // Debugging: Log the raw value of 'quizzes' in localStorage
   const storedQuizzes = localStorage.getItem('quizzes');
   console.log("Stored quizzes from localStorage:", storedQuizzes);
@@ -44,6 +47,9 @@ const QuizConfirmation = () => {
     updatedQuizzes = [];
   }
 
+
+
+
   useEffect(() => {
     if (!studyNoteId) {
       navigate('/dashboard');
@@ -55,19 +61,27 @@ const QuizConfirmation = () => {
   
     if (storedQuiz) {
       console.log("Retrieved quiz from localStorage:", JSON.parse(storedQuiz));
+      // Ensure that the quiz is set from localStorage if already generated
       dispatch({ type: "QUIZ_GENERATED_SUCCESS", payload: JSON.parse(storedQuiz) });
     } else if (!alreadyGenerated) {
       console.log("Starting quiz generation...");
-      dispatch(generateQuizAction(studyNoteId));
+      dispatch(generateQuizAction(studyNoteId)); // This will handle both generation and success/failure
       localStorage.setItem(`quizGeneratedFor_${studyNoteId}`, 'true');
     }
   }, [dispatch, studyNoteId, navigate]);
   
+  
+
+
+
 
   // If quiz is generated, navigate to the study note page
   const handleBackToStudyNote = () => {
     navigate(`/studynote/${studyNoteId}`);
   };
+
+
+
 
   return (
     <MainScreen title="Quiz Confirmation">
