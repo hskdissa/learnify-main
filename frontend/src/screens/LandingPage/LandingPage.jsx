@@ -5,7 +5,7 @@ import "./LandingPage.css";
 
 const LandingPage = () => {
 
-    /*
+    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -15,7 +15,7 @@ const LandingPage = () => {
             navigate("/dashboard"); 
         }
     }, [navigate]);
-    */
+    
    
     return (
         <div className="main">

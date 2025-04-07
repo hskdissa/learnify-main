@@ -5,7 +5,7 @@ import  thunk  from "redux-thunk"; // Weird, keeps changing
 
 
 import { composeWithDevTools } from "redux-devtools-extension";
-import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
+import { userChangeReducer, userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
 import { noteCreateReducer, noteDeleteReducer, noteListReducer, noteUpdateReducer } from "./reducers/noteReducers";
 import { uploadFileReducer } from "./reducers/uploadReducers";
 import { openaiGenerateReducer } from './reducers/openaiReducers';
@@ -22,6 +22,8 @@ const rootReducer = combineReducers({
   // Add reducers here, for example:
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
+  userChange: userChangeReducer,
+
   noteList: noteListReducer,
   noteCreate: noteCreateReducer,
   noteUpdate: noteUpdateReducer,

@@ -33,14 +33,14 @@ const Header = () => {
           </Nav>
 
           {/* Right-side navigation */}
-          <Nav>
+          {userInfo ? <Nav>
             <Nav.Link as={Link} to="/dashboard">
               Dashboard
             </Nav.Link>
 
             {/* Changed title to be Variable depending on the user thats logged in*/}
             <NavDropdown title={userInfo?.name || "Profile"} id="basic-nav-dropdown">
-              <NavDropdown.Item as={Link} to="/profile">
+              <NavDropdown.Item as={Link} to="/my-profile">
                 My Profile
               </NavDropdown.Item>
 
@@ -51,7 +51,13 @@ const Header = () => {
                 Logout
               </NavDropdown.Item>
             </NavDropdown>
-          </Nav>
+          </Nav>:<Nav>
+
+          <Nav.Link as={Link} to="/login">
+              Login
+            </Nav.Link>
+            
+            </Nav>}
         </Navbar.Collapse>
       </Container>
     </Navbar >

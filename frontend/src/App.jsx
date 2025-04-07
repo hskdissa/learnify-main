@@ -19,6 +19,7 @@ import QuizDisplay from "./screens/Quiz/QuizDisplay"; // Path for QuizDisplay pa
 import QuizConfirmation from "./screens/Quiz/QuizConfirmation"; // Import the confirmation page
 import SingleQuiz from './screens/Quiz/SingleQuiz';
 import QuizResult from './screens/Quiz/QuizResult';
+import MyProfileScreen from './screens/MyProfileScreen/MyProfileScreen';
 
 
 
@@ -37,6 +38,7 @@ const App = () => (
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<SigninScreen />} />
+        <Route path="/my-profile" element={<MyProfileScreen />} />
         <Route path="/register" element={<SignupScreen />} />
         <Route path="/createnote" element={<CreateNote />} />
         <Route path="/note/:id" element={<UpdateNote />} />

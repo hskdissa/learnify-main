@@ -24,7 +24,7 @@ const handleError = (error, dispatch, failType) => {
   dispatch({ type: failType, payload: message });
 };
 
-// Your action code here
+/*
 export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
   try {
     dispatch({ type: GENERATE_QUIZ_REQUEST });
@@ -56,6 +56,56 @@ export const generateQuizAction = (studyNoteId) => async (dispatch, getState) =>
     });
   }
 };
+
+*/
+
+export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: GENERATE_QUIZ_REQUEST });
+
+    const { userLogin: { userInfo } } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    // Get existing quiz data from state (if available)
+    const { quizList } = getState(); 
+    const existingQuiz = quizList.quizzes.find((quiz) => quiz.studyNoteId === studyNoteId);
+
+    if (existingQuiz) {
+      // If quiz already exists for this study note, prevent regeneration
+      console.log("Quiz already exists for this study note.");
+      dispatch({
+        type: GENERATE_QUIZ_FAIL,
+        payload: "A quiz has already been generated for this study note.",
+      });
+      return; // Stop further execution
+    }
+
+    // Proceed with quiz generation if no existing quiz is found
+    const { data } = await axios.post(
+      `${API_URL}/api/quizzes/generate`,
+      { studyNoteId },
+      config
+    );
+
+    console.log("API Response Data:", data);
+
+    dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: data });
+
+  } catch (error) {
+    console.error("Error during quiz generation:", error); // Log the error
+    dispatch({
+      type: GENERATE_QUIZ_FAIL,
+      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+    });
+  }
+};
+
 
 // Action to get quizzes by study note ID
 export const getQuizzesByStudyNoteIdAction = (studyNoteId) => async (dispatch, getState) => {

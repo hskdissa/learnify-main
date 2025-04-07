@@ -2,137 +2,154 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getQuizByIdAction, submitQuizAction } from '../../actions/quizActions';
-import { Button, Container, Card, Form, Alert } from 'react-bootstrap';
+import { Button, Container, Card, Form, Alert, ProgressBar } from 'react-bootstrap';
 import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage';
 import MainScreen from '../../components/MainScreen';
 
 const SingleQuiz = () => {
-    const { studyNoteId, quizId } = useParams();
-    console.log("Quiz ID:", quizId);
-    console.log("Study Note ID:", studyNoteId);
-    
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-  
-    const [answers, setAnswers] = useState({});
-    const [submitted, setSubmitted] = useState(false);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    
-    const quizDetails = useSelector((state) => state.quizDisplay);
-    const { loading, error, quiz } = quizDetails;
-  
-    useEffect(() => {
-        console.log("Fetching quiz for studyNoteId:", studyNoteId, "and quizId:", quizId);
-  
-        if (studyNoteId && quizId) {
-            dispatch(getQuizByIdAction(studyNoteId, quizId));
-        } else {
-            console.error("Missing studyNoteId or quizId");
-        }
-    }, [dispatch, studyNoteId, quizId]);
-  
-    const handleAnswerChange = (questionId, option) => {
-        setAnswers((prevAnswers) => ({
-            ...prevAnswers,
-            [questionId]: option,
-        }));
-    };
+  const { studyNoteId, quizId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const handleNext = () => {
-        if (currentQuestionIndex < quiz.questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-        }
-    };
+  const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-    const handlePrev = () => {
-        if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(currentQuestionIndex - 1);
-        }
-    };
+  const quizDetails = useSelector((state) => state.quizDisplay);
+  const { loading, error, quiz } = quizDetails;
 
-    const handleSubmit = async () => {
-        setSubmitted(true);
+  useEffect(() => {
+    if (studyNoteId && quizId) {
+      dispatch(getQuizByIdAction(studyNoteId, quizId));
+    }
+  }, [dispatch, studyNoteId, quizId]);
 
-        try {
-            const response = await dispatch(submitQuizAction(studyNoteId, quizId, answers));
-            console.log("Response from backend:", response);
+  const handleAnswerChange = (questionId, option) => {
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [questionId]: option,
+    }));
+  };
 
-            const { score, points, feedback } = response || {};
-    
-            if (score && points !== undefined && Array.isArray(feedback)) {
-                const numericScore = parseInt(score.split('/')[0], 10); 
-                const numericPoints = parseInt(points, 10);
-    
-                navigate(`/quizzes/studynote/${studyNoteId}/quiz/${quizId}/submit`, {
-                    state: {
-                        score: numericScore,
-                        points: numericPoints,
-                        feedback: feedback,
-                    },
-                });
-            } else {
-                console.error('Error: Missing score, points, or feedback in the response data');
-            }
-        } catch (error) {
-            console.error('Error submitting quiz:', error);
-        }
-    };
+  // Check if answer is selected before moving to next question
+  const handleNext = () => {
+    const currentQuestion = quiz.questions[currentQuestionIndex];
+    if (answers[currentQuestion._id]) { // Only move to the next question if the answer is selected
+      if (currentQuestionIndex < quiz.questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }
+    }
+  };
 
-    return (
-      <MainScreen title={`Quiz: ${quiz?.title || ''}`}>
-        <Container>
-          {loading ? (
-            <Loading />
-          ) : error ? (
-            <ErrorMessage variant="danger">{error}</ErrorMessage>
-          ) : (
-            quiz && quiz.questions && Array.isArray(quiz.questions) && quiz.questions.length > 0 ? (
-              <div>
-                <Card style={{ marginBottom: '20px' }}>
-                  <Card.Body>
-                    <h3>{quiz.title}</h3>
-                    <p>{quiz.description}</p>
-                    <div key={quiz.questions[currentQuestionIndex]._id} style={{ marginBottom: '15px' }}>
-                      <h5>{currentQuestionIndex + 1}. {quiz.questions[currentQuestionIndex].question}</h5>
-                      <Form>
-                        {quiz.questions[currentQuestionIndex].options.map((option, i) => {
-                          const optionLabel = String.fromCharCode(65 + i); // Converts index to A, B, C, etc.
-                          return (
-                            <Form.Check
-                              type="radio"
-                              label={`${optionLabel}. ${option}`}
-                              name={`question-${quiz.questions[currentQuestionIndex]._id}`}
-                              value={option}
-                              onChange={() => handleAnswerChange(quiz.questions[currentQuestionIndex]._id, option)}
-                              checked={answers[quiz.questions[currentQuestionIndex]._id] === option}
-                              key={i}
-                            />
-                          );
-                        })}
-                      </Form>
-                    </div>
-                  </Card.Body>
-                </Card>
+  const handlePrev = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setSubmitted(true);
+
+    try {
+      const response = await dispatch(submitQuizAction(studyNoteId, quizId, answers));
+
+      const { score, points, feedback } = response || {};
+      const numericScore = parseInt(score.split('/')[0], 10);
+      const numericPoints = parseInt(points, 10);
+
+      navigate(`/quizzes/studynote/${studyNoteId}/quiz/${quizId}/submit`, {
+        state: {
+          score: numericScore,
+          points: numericPoints,
+          feedback: feedback,
+        },
+      });
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+    }
+  };
+
+  return (
+    <MainScreen title={`${quiz?.title || ''}`}>
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+        {loading ? (
+          <Loading />
+        ) : error ? (
+          <ErrorMessage variant="danger">{error}</ErrorMessage>
+        ) : (
+          quiz && quiz.questions && quiz.questions.length > 0 && (
+            <Card className="shadow-lg rounded" style={{ width: '100%', maxWidth: '800px', padding: '20px' }}>
+              <Card.Body>
+                <h3 className="text-center">{quiz.title}</h3>
+                <p className="text-center text-muted">{quiz.description}</p>
+
+                {/* Progress Bar */}
+                <ProgressBar
+                  now={(currentQuestionIndex + 1) * (100 / quiz.questions.length)}
+                  label={`Question ${currentQuestionIndex + 1} of ${quiz.questions.length}`}
+                  className="mb-4"
+                />
+
                 <div style={{ marginBottom: '20px' }}>
-                  <Button onClick={handlePrev} disabled={currentQuestionIndex === 0}>Previous</Button>
-                  <Button onClick={handleNext} disabled={currentQuestionIndex === quiz.questions.length - 1}>Next</Button>
+                  <h5>{currentQuestionIndex + 1}. {quiz.questions[currentQuestionIndex].question}</h5>
+                  <Form>
+                    {quiz.questions[currentQuestionIndex].options.map((option, i) => {
+                      const optionLabel = String.fromCharCode(65 + i); // Converts index to A, B, C, etc.
+                      return (
+                        <Form.Check
+                          type="radio"
+                          label={`${optionLabel}. ${option}`}
+                          name={`question-${quiz.questions[currentQuestionIndex]._id}`}
+                          value={option}
+                          onChange={() => handleAnswerChange(quiz.questions[currentQuestionIndex]._id, option)}
+                          checked={answers[quiz.questions[currentQuestionIndex]._id] === option}
+                          key={i}
+                        />
+                      );
+                    })}
+                  </Form>
                 </div>
-                {!submitted ? (
-                  <Button onClick={handleSubmit}>Submit Quiz</Button>
-                ) : (
-                  <Alert variant="success">
-                    <h4>Your Quiz has been Submitted!</h4>
-                  </Alert>
-                )}
-              </div>
-            ) : (
-              <ErrorMessage variant="danger">No questions available in the quiz.</ErrorMessage>
-            )
-          )}
-        </Container>
-      </MainScreen>
-    );
+
+                <div className="d-flex justify-content-between">
+                  <Button
+                    onClick={handlePrev}
+                    disabled={currentQuestionIndex === 0}
+                    variant="outline-secondary"
+                    className="w-45"
+                  >
+                    Previous
+                  </Button>
+
+                  <Button
+                    onClick={handleNext}
+                    disabled={currentQuestionIndex === quiz.questions.length - 1 || !answers[quiz.questions[currentQuestionIndex]._id]}
+                    variant="outline-primary"
+                    className="w-45"
+                  >
+                    Next
+                  </Button>
+                </div>
+
+                <div className="text-center mt-4">
+                  {!submitted ? (
+                    <Button onClick={handleSubmit} variant="success" size="lg" className="w-100">
+                      Submit Quiz
+                    </Button>
+                  ) : (
+                    <Alert variant="success">
+                      <h4>Your Quiz has been Submitted!</h4>
+                      <h4>Checking your Answers now...</h4>
+                    </Alert>
+                  )}
+                </div>
+              </Card.Body>
+            </Card>
+          )
+        )}
+      </Container>
+    </MainScreen>
+  );
 };
 
 export default SingleQuiz;

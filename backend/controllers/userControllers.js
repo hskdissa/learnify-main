@@ -55,6 +55,37 @@ const authUser = asyncHandler(async (req, res) => {
 });
 
 
+const changeProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    //Save information
+    const updatedUser = await user.save();
+
+    // Send information to the frontend
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email, 
+      token: generateToken(updatedUser._id),
+    })
+
+  }
+  else{
+    res.status(404)
+    throw new Error('User Not Found')
+  }
+
+});
+
+
 
 // Get user's total points, level, and badges
 const getUserScore = asyncHandler(async (req, res) => {
@@ -75,4 +106,4 @@ const getUserScore = asyncHandler(async (req, res) => {
 
 
 
-module.exports = { registerUser, authUser, getUserScore };
+module.exports = { registerUser, authUser, changeProfile, getUserScore };

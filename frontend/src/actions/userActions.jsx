@@ -1,5 +1,5 @@
 import axios from "axios";
-import { USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT, USER_REGISTER_FAIL, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS } from "../constants/userConstants";
+import { USER_CHANGE_FAIL, USER_CHANGE_REQUEST, USER_CHANGE_SUCCESS, USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT, USER_REGISTER_FAIL, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS } from "../constants/userConstants";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -53,5 +53,27 @@ export const register = (name, email, password) => async (dispatch) => {
         localStorage.setItem("userInfo", JSON.stringify(data));
     } catch (error) {
         dispatch({ type: USER_REGISTER_FAIL, payload: error.response.data.message ? error.response.data.message : error.message });
+    }
+};
+
+
+export const changeUser = (user) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: USER_CHANGE_REQUEST });
+        const {userLogin: {userInfo}} = getState();
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`,
+        },
+    };
+    const {data} = await axios.post(`${API_URL}/api/users/my-profile`, user, config);
+    dispatch({ type: USER_CHANGE_SUCCESS, payload: data });
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+
+    localStorage.setItem("userInfo", JSON.stringify(data));
+    
+    } catch (error) {
+        dispatch({ type: USER_CHANGE_FAIL, payload: error.response.data.message ? error.response.data.message : error.message });
     }
 };
