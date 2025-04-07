@@ -17,7 +17,8 @@ const QuizConfirmation = () => {
   const quizGeneration = useSelector((state) => state.quizGenerateReducer);
   const { loading, error, quiz } = quizGeneration;
 
-  console.log('Quiz state:', quiz);
+  console.log("Quiz from Redux:", quiz);
+
 
 
   // Debugging: Log the raw value of 'quizzes' in localStorage
@@ -61,15 +62,17 @@ const QuizConfirmation = () => {
   
     if (storedQuiz) {
       console.log("Retrieved quiz from localStorage:", JSON.parse(storedQuiz));
-      // Ensure that the quiz is set from localStorage if already generated
       dispatch({ type: "QUIZ_GENERATED_SUCCESS", payload: JSON.parse(storedQuiz) });
     } else if (!alreadyGenerated) {
       console.log("Starting quiz generation...");
-      dispatch(generateQuizAction(studyNoteId)); // This will handle both generation and success/failure
-      localStorage.setItem(`quizGeneratedFor_${studyNoteId}`, 'true');
+      dispatch(generateQuizAction(studyNoteId)); // Dispatching the quiz generation action
+      localStorage.setItem(`quizGeneratedFor_${studyNoteId}`, 'true'); // Set the flag after successful generation
     }
   }, [dispatch, studyNoteId, navigate]);
   
+  
+  
+
   
 
 

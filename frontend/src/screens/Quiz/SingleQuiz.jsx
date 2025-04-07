@@ -8,19 +8,17 @@ import ErrorMessage from '../../components/ErrorMessage';
 import MainScreen from '../../components/MainScreen';
 
 const SingleQuiz = () => {
-    const { studyNoteId, quizId } = useParams();  // Correctly destructure studyNoteId and quizId
+    const { studyNoteId, quizId } = useParams();
     console.log("Quiz ID:", quizId);
-    console.log("Study Note ID:", studyNoteId);  // Log studyNoteId
+    console.log("Study Note ID:", studyNoteId);
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
   
     const [answers, setAnswers] = useState({});
     const [submitted, setSubmitted] = useState(false);
-    const [correctAnswers, setCorrectAnswers] = useState(0);
-    const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     
-  
     const quizDetails = useSelector((state) => state.quizDisplay);
     const { loading, error, quiz } = quizDetails;
   
@@ -40,44 +38,47 @@ const SingleQuiz = () => {
             [questionId]: option,
         }));
     };
-  
+
+    const handleNext = () => {
+        if (currentQuestionIndex < quiz.questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+        }
+    };
 
     const handleSubmit = async () => {
         setSubmitted(true);
-    
+
         try {
-            // Send answers to the backend for submission
             const response = await dispatch(submitQuizAction(studyNoteId, quizId, answers));
+            console.log("Response from backend:", response);
+
+            const { score, points, feedback } = response || {};
     
-            console.log("Response from backend:", response); // Log the response here
+            if (score && points !== undefined && Array.isArray(feedback)) {
+                const numericScore = parseInt(score.split('/')[0], 10); 
+                const numericPoints = parseInt(points, 10);
     
-            // Check if the response contains the expected structure
-            if (response && response.score && response.points !== undefined && Array.isArray(response.feedback)) {
-                const { score, points, feedback } = response;
-    
-                // If score, points, or feedback is missing, log an error
-                if (!score || !points || !feedback) {
-                    console.error('Error: Missing score, points, or feedback in the response data');
-                    return;
-                }
-    
-                // Proceed with navigating to the result page
                 navigate(`/quizzes/studynote/${studyNoteId}/quiz/${quizId}/submit`, {
                     state: {
-                        score: score,
-                        points: points,
+                        score: numericScore,
+                        points: numericPoints,
                         feedback: feedback,
                     },
                 });
             } else {
-                console.error('Error: Response structure is invalid or missing properties');
+                console.error('Error: Missing score, points, or feedback in the response data');
             }
         } catch (error) {
             console.error('Error submitting quiz:', error);
         }
     };
-    
-  
+
     return (
       <MainScreen title={`Quiz: ${quiz?.title || ''}`}>
         <Container>
@@ -92,26 +93,31 @@ const SingleQuiz = () => {
                   <Card.Body>
                     <h3>{quiz.title}</h3>
                     <p>{quiz.description}</p>
-                    {quiz.questions.map((question, index) => (
-                      <div key={question._id} style={{ marginBottom: '15px' }}>
-                        <h5>{index + 1}. {question.question}</h5> {/* Changed to question.question */}
-                        <Form>
-                          {question.options.map((option, i) => (
+                    <div key={quiz.questions[currentQuestionIndex]._id} style={{ marginBottom: '15px' }}>
+                      <h5>{currentQuestionIndex + 1}. {quiz.questions[currentQuestionIndex].question}</h5>
+                      <Form>
+                        {quiz.questions[currentQuestionIndex].options.map((option, i) => {
+                          const optionLabel = String.fromCharCode(65 + i); // Converts index to A, B, C, etc.
+                          return (
                             <Form.Check
                               type="radio"
-                              label={option}
-                              name={`question-${question._id}`}
+                              label={`${optionLabel}. ${option}`}
+                              name={`question-${quiz.questions[currentQuestionIndex]._id}`}
                               value={option}
-                              onChange={() => handleAnswerChange(question._id, option)}
-                              checked={answers[question._id] === option}
+                              onChange={() => handleAnswerChange(quiz.questions[currentQuestionIndex]._id, option)}
+                              checked={answers[quiz.questions[currentQuestionIndex]._id] === option}
                               key={i}
                             />
-                          ))}
-                        </Form>
-                      </div>
-                    ))}
+                          );
+                        })}
+                      </Form>
+                    </div>
                   </Card.Body>
                 </Card>
+                <div style={{ marginBottom: '20px' }}>
+                  <Button onClick={handlePrev} disabled={currentQuestionIndex === 0}>Previous</Button>
+                  <Button onClick={handleNext} disabled={currentQuestionIndex === quiz.questions.length - 1}>Next</Button>
+                </div>
                 {!submitted ? (
                   <Button onClick={handleSubmit}>Submit Quiz</Button>
                 ) : (

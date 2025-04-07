@@ -44,9 +44,12 @@ export const generateQuizAction = (studyNoteId) => async (dispatch, getState) =>
       config
     );
 
+    console.log("API Response Data:", data);
+
     dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: data });
 
   } catch (error) {
+    console.error("Error during quiz generation:", error); // Log the error
     dispatch({
       type: GENERATE_QUIZ_FAIL,
       payload: error.response && error.response.data.message ? error.response.data.message : error.message,

@@ -319,7 +319,12 @@ const submitQuiz = async (req, res) => {
   
       // Prepare AI prompt with user answers
       const aiPrompt = `
-      You are an AI that evaluates quiz responses. Provide feedback in JSON format only. Do not add any explanations outside the JSON.
+      You are an AI that evaluates quiz responses. Compare the user's answer to the correct answer and always provide feedback.
+      
+      If the user's answer is correct, respond with "Correct" in the explanation.
+      If the user's answer is incorrect, explain why it is wrong and provide the correct explanation.
+      
+      Provide the response in JSON format only.
       
       Format:
       [
@@ -327,13 +332,15 @@ const submitQuiz = async (req, res) => {
           "question": "What is X?",
           "userAnswer": "Option B",
           "correctAnswer": "Option A",
-          "explanation": "Explanation here..."
+          "explanation": "Incorrect. The correct answer is A because..."
         }
       ]
       
       User's Quiz Responses:
       ${JSON.stringify(questionsWithUserAnswers)}
       `;
+      
+      
   
       // Send to AI for feedback
       const aiResponse = await openai.chat.completions.create({
@@ -400,7 +407,7 @@ const submitQuiz = async (req, res) => {
         // Return result
         res.status(200).json({
           message: "Quiz submitted successfully",
-          score: `${score}/${quiz.questions.length}`,
+          score: `${score}/${questionsWithUserAnswers.length}`,
           points: points,  // Include the total points in the response
           feedback,
         });

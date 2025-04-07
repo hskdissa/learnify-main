@@ -10,6 +10,8 @@ const QuizResult = () => {
   
   // Get the data passed from SingleQuiz.jsx
   const { score, points, feedback } = location.state || {};
+  console.log("Quiz Result Data:", location.state);
+
 
   // Navigate back to the study note
   const goBackToStudyNote = () => {
@@ -23,8 +25,13 @@ const QuizResult = () => {
           <Card.Body>
             <Row>
               <Col md={6}>
+              
                 <h3>Quiz Results</h3>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Your Score: <span style={{ color: '#28a745' }}>{score}</span></p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                Your Score: <span style={{ color: '#28a745' }}>{score}/{location.state?.totalQuestions ?? feedback?.length ?? 0}</span>
+                </p>
+
+
                 <p style={{ fontSize: '1.25rem' }}>Total Points: {points}</p>
               </Col>
               <Col md={6} className="text-center">
@@ -45,7 +52,7 @@ const QuizResult = () => {
               {feedback && feedback.length > 0 ? (
                 feedback.map((item, index) => (
                   <ListGroupItem key={index} style={{ marginBottom: '15px' }}>
-                    <h6 style={{ fontWeight: 'bold' }}>{item.question}</h6>
+                    <h6 style={{ fontWeight: 'bold' }}>{index + 1}. {item.question}</h6>
                     <p><strong>Your Answer:</strong> {item.userAnswer}</p>
                     <p><strong>Correct Answer:</strong> {item.correctAnswer}</p>
                     <p><strong>Explanation:</strong> {item.explanation}</p>

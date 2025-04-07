@@ -35,6 +35,7 @@ export const quizGenerateReducer = (state = initialState, action) => {
 };
 
 
+
 export const quizListReducer = (state = { quizzes: [] }, action) => {
   switch (action.type) {
     case QUIZ_LIST_REQUEST:
