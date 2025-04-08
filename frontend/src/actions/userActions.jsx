@@ -1,5 +1,5 @@
 import axios from "axios";
-import { USER_CHANGE_FAIL, USER_CHANGE_REQUEST, USER_CHANGE_SUCCESS, USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT, USER_REGISTER_FAIL, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS } from "../constants/userConstants";
+import { USER_CHANGE_FAIL, USER_CHANGE_REQUEST, USER_CHANGE_SUCCESS, USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT, USER_REGISTER_FAIL, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS, USER_TOTAL_POINTS_FAIL, USER_TOTAL_POINTS_REQUEST, USER_TOTAL_POINTS_SUCCESS } from "../constants/userConstants";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -75,5 +75,30 @@ export const changeUser = (user) => async (dispatch, getState) => {
     
     } catch (error) {
         dispatch({ type: USER_CHANGE_FAIL, payload: error.response.data.message ? error.response.data.message : error.message });
+    }
+};
+
+
+// Action to get total points and level
+export const getTotalPoints = () => async (dispatch, getState) => {
+    try {
+        dispatch({ type: USER_TOTAL_POINTS_REQUEST });
+
+        const { userLogin: { userInfo } } = getState();
+
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${userInfo.token}`, // Send the token in headers
+            },
+        };
+
+        const { data } = await axios.get(`${API_URL}/api/users/total-points`, config);
+
+        dispatch({ type: USER_TOTAL_POINTS_SUCCESS, payload: data });
+    } catch (error) {
+        dispatch({
+            type: USER_TOTAL_POINTS_FAIL,
+            payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+        });
     }
 };

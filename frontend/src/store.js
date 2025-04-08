@@ -5,8 +5,7 @@ import  thunk  from "redux-thunk"; // Weird, keeps changing
 
 
 import { composeWithDevTools } from "redux-devtools-extension";
-import { userChangeReducer, userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
-//import { noteCreateReducer, noteDeleteReducer, noteListReducer, noteUpdateReducer } from "./reducers/noteReducers";
+import { userChangeReducer, userLoginReducer, userRegisterReducer, userTotalPointsReducer } from "./reducers/userReducers";
 import { uploadFileReducer } from "./reducers/uploadReducers";
 import { openaiGenerateReducer } from './reducers/openaiReducers';
 import { studyNoteListReducer, studyNoteDetailsReducer, studyNoteDeleteReducer } from "./reducers/studyNoteReducers";
@@ -24,10 +23,6 @@ const rootReducer = combineReducers({
   userRegister: userRegisterReducer,
   userChange: userChangeReducer,
 
-  //noteList: noteListReducer,
-  //noteCreate: noteCreateReducer,
-  //noteUpdate: noteUpdateReducer,
-  //noteDelete: noteDeleteReducer,
   
   uploadFile: uploadFileReducer,
 
@@ -48,6 +43,8 @@ const rootReducer = combineReducers({
   quizSubmitReducer: quizSubmitReducer,
   
   quizResultReducer: quizResultReducer,
+
+  userTotalPoints: userTotalPointsReducer,  
   
 
 

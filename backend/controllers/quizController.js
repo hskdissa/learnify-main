@@ -383,23 +383,29 @@ const submitQuiz = async (req, res) => {
         });
   
         await quizScore.save({ session }); // Save the quiz score in the transaction
+
+
   
         // Update user score in database
         let userScore = await UserScore.findOne({ user: userId }).session(session);
-  
+
         if (!userScore) {
           userScore = new UserScore({
             user: userId,
             totalPoints: points,
-            level: 1,
-            badges: [],
+            level: 1, // Start at level 1
           });
         } else {
-          userScore.totalPoints += points;
+          userScore.totalPoints += points; // Add new points
+          userScore.level = Math.floor(userScore.totalPoints / 50) + 1; // Level up every 50 points
         }
+
+        await userScore.save({ session }); // Save updated score
+
+
   
-        await userScore.save({ session }); // Save the updated user score in the transaction
-  
+
+
         // Commit transaction
         await session.commitTransaction();
         session.endSession();
@@ -428,5 +434,27 @@ const submitQuiz = async (req, res) => {
   
 
 
-module.exports = { generateQuiz, deleteQuiz, getQuizzesByStudyNoteId, getQuizById, submitQuiz };
+
+const getUserTotalPoints = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const userScore = await UserScore.findOne({ user: userId });
+
+        if (!userScore) {
+            return res.status(200).json({ totalPoints: 0, level: 0 });  // Default values
+        }
+
+        res.status(200).json({ 
+            totalPoints: userScore.totalPoints,
+            level: userScore.level
+        });
+    } catch (error) {
+        console.error("Error fetching total points:", error);
+        res.status(500).json({ message: "Error retrieving total points" });
+    }
+});
+
+
+
+module.exports = { generateQuiz, deleteQuiz, getQuizzesByStudyNoteId, getQuizById, submitQuiz, getUserTotalPoints };
 
