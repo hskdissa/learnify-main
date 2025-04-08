@@ -3,7 +3,8 @@ const { generateFlashcards,
         getAllFlashcards, 
         getFlashcardById, 
         deleteFlashcard, 
-        getFlashcardsByStudyNoteId} = require('../controllers/flashcardController');
+        getFlashcardsByStudyNoteId,
+        getSingleFlashcard} = require('../controllers/flashcardController');
 const { protect } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -13,6 +14,8 @@ router.post('/generate', protect, generateFlashcards);
 
 // Get all flashcards for a user
 router.get('/', protect, getAllFlashcards);
+
+router.get('/:id', protect, getSingleFlashcard);
 
 // Get flashcards related to a specific study note ID (THIS IS THE IMPORTANT ROUTE)
 router.get('/studynote/:studyNoteId', protect, getFlashcardsByStudyNoteId);

@@ -3,6 +3,7 @@ import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import LandingPage from "./screens/LandingPage/LandingPage";
 import Dashboard from "./screens/Dashboard/Dashboard";
+
 import UploadFile from "./screens/UploadFile/UploadFile";
 import SigninScreen from './screens/SigninScreen/SigninScreen';
 import SignupScreen from './screens/SignupScreen/SignupScreen';
@@ -32,6 +33,7 @@ const App = () => (
 
 
         <Route path="/dashboard" element={<Dashboard />} />
+        
         <Route path="/uploadfile" element={<UploadFile />} />
         <Route path="/studynote/:id" element={<SingleStudyNote />} />
 

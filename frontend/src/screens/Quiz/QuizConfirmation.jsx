@@ -17,74 +17,30 @@ const QuizConfirmation = () => {
   const quizGeneration = useSelector((state) => state.quizGenerateReducer);
   const { loading, error, quiz } = quizGeneration;
 
+  // Debugging: Log the quiz object from Redux
   console.log("Quiz from Redux:", quiz);
-
-
-
-  // Debugging: Log the raw value of 'quizzes' in localStorage
-  const storedQuizzes = localStorage.getItem('quizzes');
-  console.log("Stored quizzes from localStorage:", storedQuizzes);
-
-  // Try to fetch quizzes from localStorage and handle possible invalid format
-  let updatedQuizzes = [];
-  try {
-    if (storedQuizzes) {
-      updatedQuizzes = JSON.parse(storedQuizzes);
-      if (!Array.isArray(updatedQuizzes)) {
-        console.error("Expected quizzes to be an array, but it's not. Resetting to empty array.");
-        updatedQuizzes = [];
-      }
-    } else {
-      console.warn("No quizzes found in localStorage. Initializing empty array.");
-      updatedQuizzes = [];
-    }
-  } catch (error) {
-    console.error("Error parsing quizzes from localStorage:", error);
-    updatedQuizzes = [];
-  }
-
-  // Ensure quizzes are always an array
-  if (!Array.isArray(updatedQuizzes)) {
-    updatedQuizzes = [];
-  }
-
-
-
 
   useEffect(() => {
     if (!studyNoteId) {
       navigate('/dashboard');
       return;
     }
-  
-    const alreadyGenerated = localStorage.getItem(`quizGeneratedFor_${studyNoteId}`);
-    const storedQuiz = localStorage.getItem(`generatedQuiz_${studyNoteId}`);
-  
-    if (storedQuiz) {
-      console.log("Retrieved quiz from localStorage:", JSON.parse(storedQuiz));
-      dispatch({ type: "QUIZ_GENERATED_SUCCESS", payload: JSON.parse(storedQuiz) });
-    } else if (!alreadyGenerated) {
+
+    // Check if quiz already exists in Redux
+    if (quiz && quiz.studyNoteId === studyNoteId) {
+      // Quiz already exists, no need to generate again
+      console.log("Quiz already generated, skipping quiz generation.");
+    } else {
+      // If no quiz exists for this study note, generate one
       console.log("Starting quiz generation...");
       dispatch(generateQuizAction(studyNoteId)); // Dispatching the quiz generation action
-      localStorage.setItem(`quizGeneratedFor_${studyNoteId}`, 'true'); // Set the flag after successful generation
     }
-  }, [dispatch, studyNoteId, navigate]);
-  
-  
-  
-
-  
-
-
-
+  }, [dispatch, studyNoteId, navigate, quiz]); // Added 'quiz' as a dependency to handle state changes
 
   // If quiz is generated, navigate to the study note page
   const handleBackToStudyNote = () => {
     navigate(`/studynote/${studyNoteId}`);
   };
-
-
-
 
   return (
     <MainScreen title="Quiz Confirmation">

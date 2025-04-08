@@ -12,7 +12,7 @@ import { openaiGenerateReducer } from './reducers/openaiReducers';
 import { studyNoteListReducer, studyNoteDetailsReducer, studyNoteDeleteReducer } from "./reducers/studyNoteReducers";
 
 
-import { flashcardDeleteReducer, flashcardDetailsReducer, flashcardGenerateReducer, flashcardListReducer } from './reducers/flashcardReducers';
+import { flashcardDeleteReducer, flashcardDetailsReducer, flashcardGenerateReducer, flashcardListReducer, singleflashcardReducer } from './reducers/flashcardReducers';
 
 import { quizGenerateReducer, quizListReducer, quizSubmitReducer, quizResultReducer, quizDisplayReducer } from "./reducers/quizReducers";
 
@@ -40,6 +40,7 @@ const rootReducer = combineReducers({
   flashcardDetails: flashcardDetailsReducer,
   flashcardDelete: flashcardDeleteReducer,
   flashcardGenerate: flashcardGenerateReducer,
+  ingleflashcard: singleflashcardReducer, 
 
   quizGenerateReducer: quizGenerateReducer,
   quizList: quizListReducer,

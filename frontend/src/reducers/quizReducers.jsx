@@ -21,14 +21,14 @@ const initialState = {
   quiz: null,
 };
 
-export const quizGenerateReducer = (state = initialState, action) => {
+export const quizGenerateReducer = (state = { quiz: null }, action) => {
   switch (action.type) {
     case GENERATE_QUIZ_REQUEST:
-      return { ...state, loading: true };
+      return { loading: true };
     case GENERATE_QUIZ_SUCCESS:
-      return { ...state, loading: false, quiz: action.payload };
+      return { loading: false, quiz: action.payload };
     case GENERATE_QUIZ_FAIL:
-      return { ...state, loading: false, error: action.payload };
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

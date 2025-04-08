@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Card, Badge, Container, Row, Col } from "react-bootstrap";
+import { Button, Card, Badge, Container, Row, Col, Alert } from "react-bootstrap";
 import { getStudyNoteById } from "../../actions/studyNoteAction";
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -10,7 +10,7 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { generateFlashcardsAction } from "../../actions/flashcardActions";
 import MainScreen from "../../components/MainScreen";
-import { generateQuizAction } from "../../actions/quizActions"; 
+import { generateQuizAction } from "../../actions/quizActions";
 import { FaDownload, FaListAlt, FaClipboardList, FaPenAlt } from 'react-icons/fa'; // Icons for buttons
 
 const SingleStudyNote = () => {
@@ -24,7 +24,28 @@ const SingleStudyNote = () => {
 
   // Redux state for quiz generation
   const quizGeneration = useSelector((state) => state.quizGenerateReducer || {});
-  const { quiz } = quizGeneration;
+  const { loading: quizLoading, error: quizError, quiz } = quizGeneration;
+
+  // Loading state for quiz generation
+  const [loadingQuiz, setLoadingQuiz] = useState(false);
+  const [quizGenerationMessage, setQuizGenerationMessage] = useState("");
+  const [hasQuizBeenGenerated, setHasQuizBeenGenerated] = useState(false);
+
+    // Update the quiz state and message based on quiz generation
+    useEffect(() => {
+      if (quiz) {
+        if (!hasQuizBeenGenerated) {
+          setLoadingQuiz(false);
+          setQuizGenerationMessage("Quiz generated successfully!");
+          setHasQuizBeenGenerated(true);
+        }
+      }
+  
+      if (quizError) {
+        setLoadingQuiz(false);
+        setQuizGenerationMessage("Failed to generate quiz. Please try again.");
+      }
+    }, [quiz, quizError, hasQuizBeenGenerated]);
 
   // Fetch study note by ID
   useEffect(() => {
@@ -60,17 +81,14 @@ const SingleStudyNote = () => {
     }
   };
 
-  // Handle Generate Quiz action
   const handleGenerateQuiz = () => {
-    if (id) {
-      if (quiz) {
-        // If quiz already exists, prevent re-generating it
-        alert("A quiz has already been generated for this study note.");
-        return;
-      }
-      dispatch(generateQuizAction(id));
-      navigate(`/quizzes/generate`, { state: { studyNoteId: id } });
+    if (quiz && quiz.studyNoteId === id) {
+      alert("A quiz has already been generated for this study note.");
+      return;
     }
+  
+    setLoadingQuiz(true); // Show loading indicator while generating
+    dispatch(generateQuizAction(id));
   };
 
   // Navigate to view flashcards
@@ -81,6 +99,8 @@ const SingleStudyNote = () => {
   const viewFlashcardsHandler = () => {
     navigate(`/studynote/${id}/flashcards`);
   };
+
+
 
   return (
     <MainScreen title={`Study Note: ${studyNote ? studyNote.title : "Loading..."}`}>
@@ -110,6 +130,11 @@ const SingleStudyNote = () => {
                   )}
                 </div>
 
+                {/* Quiz Generation Status */}
+                {quizGenerationMessage && (
+                  <Alert variant={quizError ? "danger" : "success"}>{quizGenerationMessage}</Alert>
+                )}
+
                 {/* Buttons Row */}
                 <Row className="mt-4">
                   <Col md={6} className="mb-3">
@@ -131,8 +156,13 @@ const SingleStudyNote = () => {
                     </Button>
                   </Col>
                   <Col md={6} className="mb-3">
-                    <Button onClick={handleGenerateQuiz} variant="warning" className="w-100">
-                      <FaPenAlt className="me-2" /> Generate Quiz
+                    <Button
+                      onClick={handleGenerateQuiz}
+                      variant="warning"
+                      className="w-100"
+                      disabled={loadingQuiz} // Disable while loading
+                    >
+                      {loadingQuiz ? "Generating..." : <><FaPenAlt className="me-2" /> Generate Quiz</>}
                     </Button>
                   </Col>
                 </Row>

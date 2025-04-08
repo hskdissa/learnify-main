@@ -57,12 +57,7 @@ const FlashcardDisplayScreen = () => {
                         <Link to={`/studynote/${studyNoteId}/flashcards/${flashcardSet._id}`}>
                           <Button variant="primary" className="me-2">View</Button>
                         </Link>
-                        <Button 
-                          variant="danger" 
-                          onClick={() => deleteHandler(flashcardSet._id)}
-                        >
-                          Delete
-                        </Button>
+
                       </div>
                     </Card.Header>
                     

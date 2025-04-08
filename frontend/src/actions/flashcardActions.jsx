@@ -12,6 +12,9 @@ import {
   FLASHCARD_DELETE_REQUEST,
   FLASHCARD_DELETE_SUCCESS,
   FLASHCARD_DELETE_FAIL,
+  GET_SINGLE_FLASHCARD_REQUEST,
+  GET_SINGLE_FLASHCARD_SUCCESS,
+  GET_SINGLE_FLASHCARD_FAIL,
 } from '../constants/flashcardConstants';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -239,3 +242,35 @@ export const listFlashcardsByStudyNote = (studyNoteId) => async (dispatch, getSt
   }
 };
 
+
+
+export const getSingleFlashcard = (flashcardId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: 'GET_SINGLE_FLASHCARD_REQUEST' });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    console.log('Requesting flashcard with ID:', flashcardId);  // Make sure this logs the correct ID
+
+    const { data } = await axios.get(`${API_URL}/api/flashcards/${flashcardId}`, config);
+
+
+    dispatch({
+      type: 'GET_SINGLE_FLASHCARD_SUCCESS',
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: 'GET_SINGLE_FLASHCARD_FAIL',
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};

@@ -24,41 +24,8 @@ const handleError = (error, dispatch, failType) => {
   dispatch({ type: failType, payload: message });
 };
 
+
 /*
-export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: GENERATE_QUIZ_REQUEST });
-
-    const { userLogin: { userInfo } } = getState();
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const { data } = await axios.post(
-      `${API_URL}/api/quizzes/generate`,
-      { studyNoteId },
-      config
-    );
-
-    console.log("API Response Data:", data);
-
-    dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: data });
-
-  } catch (error) {
-    console.error("Error during quiz generation:", error); // Log the error
-    dispatch({
-      type: GENERATE_QUIZ_FAIL,
-      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
-    });
-  }
-};
-
-*/
-
 export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
   try {
     dispatch({ type: GENERATE_QUIZ_REQUEST });
@@ -99,6 +66,52 @@ export const generateQuizAction = (studyNoteId) => async (dispatch, getState) =>
 
   } catch (error) {
     console.error("Error during quiz generation:", error); // Log the error
+    dispatch({
+      type: GENERATE_QUIZ_FAIL,
+      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+    });
+  }
+};
+*/
+
+export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: GENERATE_QUIZ_REQUEST });
+
+    // Check if quiz is already generated for the study note
+    const storedQuiz = localStorage.getItem(`generatedQuiz_${studyNoteId}`);
+    if (storedQuiz) {
+      console.log("Quiz already exists in localStorage");
+      dispatch({
+        type: GENERATE_QUIZ_FAIL,
+        payload: "A quiz has already been generated for this study note.",
+      });
+      return;
+    }
+
+    const { userLogin: { userInfo } } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `${API_URL}/api/quizzes/generate`,
+      { studyNoteId },
+      config
+    );
+
+    // Save the generated quiz in localStorage
+    localStorage.setItem(`generatedQuiz_${studyNoteId}`, JSON.stringify(data));
+    console.log("API Response Data:", data);
+
+    dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: data });
+
+  } catch (error) {
+    console.error("Error during quiz generation:", error);
     dispatch({
       type: GENERATE_QUIZ_FAIL,
       payload: error.response && error.response.data.message ? error.response.data.message : error.message,

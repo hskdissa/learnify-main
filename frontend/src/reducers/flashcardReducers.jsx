@@ -11,6 +11,9 @@ import {
   FLASHCARD_DELETE_REQUEST,
   FLASHCARD_DELETE_SUCCESS,
   FLASHCARD_DELETE_FAIL,
+  GET_SINGLE_FLASHCARD_REQUEST,
+  GET_SINGLE_FLASHCARD_SUCCESS,
+  GET_SINGLE_FLASHCARD_FAIL,
 } from '../constants/flashcardConstants';
 
 const initialState = {
@@ -79,3 +82,18 @@ export const flashcardDeleteReducer = (state = {}, action) => {
       return state;
   }
 };
+
+
+export const singleflashcardReducer = (state = { loading: false, error: null, flashcard: {} }, action) => {
+  switch (action.type) {
+    case GET_SINGLE_FLASHCARD_REQUEST:
+      return { ...state, loading: true };
+    case GET_SINGLE_FLASHCARD_SUCCESS:
+      return { loading: false, flashcard: action.payload, error: null };
+    case GET_SINGLE_FLASHCARD_FAIL:
+      return { loading: false, error: action.payload, flashcard: {} };
+    default:
+      return state;
+  }
+};
+

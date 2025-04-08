@@ -158,5 +158,22 @@ const getFlashcardsByStudyNoteId = asyncHandler(async (req, res) => {
 
   res.status(200).json(flashcards);
 });
+
+
+// Controller to get a single flashcard by its ID
+const getSingleFlashcard = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  // Find the flashcard by ID
+  const flashcard = await Flashcard.findById(id);
+
+  if (!flashcard) {
+    res.status(404).json({ message: 'Flashcard not found' });
+    return;
+  }
+
+  // Send the flashcard data as the response
+  res.json(flashcard);
+});
   
-module.exports = { generateFlashcards, getAllFlashcards, getFlashcardById, deleteFlashcard, getFlashcardsByStudyNoteId };
+module.exports = { generateFlashcards, getAllFlashcards, getFlashcardById, deleteFlashcard, getFlashcardsByStudyNoteId, getSingleFlashcard };
