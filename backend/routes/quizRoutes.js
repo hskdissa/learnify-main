@@ -13,12 +13,11 @@ const router = express.Router();
 // Generate a quiz from a study note
 router.post("/generate", protect, generateQuiz);
 
-// Get the quiz for a specific study note (only one quiz can be generated)
+// Get the quiz for a specific study note
 router.get("/studynote/:studyNoteId", protect, getQuizzesByStudyNoteId);
 
-// Get a specific quiz by ID
-//router.get("/:quizId", protect, getQuizById); // This is the new route
 
+// Get the quiz for a specific study note along with the Quiz ID
 router.get("/studynote/:studyNoteId/quiz/:quizId", protect, getQuizById);
 
 

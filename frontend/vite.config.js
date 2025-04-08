@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     //changed port to avoid conflict
     port: 3000,
-    // Added proxy for the backend api, so that it knows which port our backend is running on
+    // Added proxy for the backend api, so that it knows which port the backend is running on
     proxy: {
       "/api": {
         target: "http://localhost:5000",

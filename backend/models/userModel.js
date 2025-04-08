@@ -21,6 +21,12 @@ const userSchema = mongoose.Schema(
         required: true,
         default: false,
       },
+      resetToken: {  // Add field for storing reset token
+        type: String,
+      },
+      resetTokenExpiration: {  // Add field for storing token expiration time
+        type: Date,
+      },
       
     },
     {

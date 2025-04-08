@@ -5,7 +5,6 @@ const cors = require('cors');
 
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 const userRoutes = require('./routes/userRoutes');
-const noteRoutes = require('./routes/noteRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const openaiRoutes = require("./routes/openaiRoutes");
 const studyNoteRoutes = require("./routes/studyNoteRoutes");
@@ -23,8 +22,8 @@ app.use(cors());
 
 
 app.use(cors({
-  origin: 'http://localhost:3000',  // Only allow requests from localhost:3000 (frontend)
-  credentials: true                 // Allow cookies or credentials if required
+  origin: 'http://localhost:3000', 
+  credentials: true                 
 }));
 
 // Root route
@@ -35,9 +34,6 @@ app.get('/', (req, res) => {
 // User routes
 app.use('/api/users', userRoutes);
 
-// Notes routes
-app.use('/api/notes', noteRoutes);
-
 // Upload file route
 app.use('/api/upload', uploadRoutes);
 
@@ -45,7 +41,6 @@ app.use('/api/upload', uploadRoutes);
 app.use("/api/openai", openaiRoutes);
 
 app.use("/api/studynotes", studyNoteRoutes);
-
 
 app.use("/api/flashcards", flashcardRoutes);
 

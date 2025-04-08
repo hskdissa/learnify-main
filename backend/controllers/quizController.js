@@ -3,10 +3,7 @@ const OpenAI = require("openai");
 const Quiz = require('../models/quizModel');
 const StudyNote = require('../models/studyNoteModel');
 const UserScore = require("../models/userScoreModel");
-
-const QuizScore = require('../models/scoreModel');  // Correct relative path
-
-
+const QuizScore = require('../models/scoreModel');
 const mongoose = require('mongoose'); 
 
 const openai = new OpenAI({
@@ -15,8 +12,10 @@ const openai = new OpenAI({
 
 // Generate a quiz from a study note
 const generateQuiz = asyncHandler(async (req, res) => {
+    // Check for the study note id in the request body
     const { studyNoteId } = req.body;
-
+    
+    // Error handling for missing study note id
     if (!studyNoteId) {
         return res.status(400).json({ message: "Study Note ID is required." });
     }
@@ -110,7 +109,7 @@ const getQuizzesByStudyNoteId = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Study Note ID is required." });
     }
 
-    // Use `find()` to retrieve all quizzes related to this study note ID
+    // To retrieve the quiz related to this study note ID
     const quizzes = await Quiz.find({ studyNote: studyNoteId }).sort({ createdAt: -1 });
 
     if (!quizzes || quizzes.length === 0) {
@@ -145,9 +144,6 @@ const getQuizById = async (req, res) => {
   }
 };
 
-  
-  
-
 
 // Delete a single quiz by ID
 const deleteQuiz = asyncHandler(async (req, res) => {
@@ -165,126 +161,16 @@ const deleteQuiz = asyncHandler(async (req, res) => {
     res.status(200).json({ message: "Quiz deleted successfully." });
 });
 
-/*
-const submitQuiz = async (req, res) => {
-  try {
-      const { studyNoteId, quizId } = req.params;
-      const { answers } = req.body;  // Answers submitted by the user
-
-      // Find the quiz
-      const quiz = await Quiz.findById(quizId);
-      if (!quiz) {
-          return res.status(404).json({ message: "Quiz not found" });
-      }
-
-      // Calculate score
-      let score = 0;
-      let points = 0;  // To track points
-      let questionsWithUserAnswers = [];
-
-      quiz.questions.forEach((question, index) => {
-          const userAnswer = answers[question._id]; // Ensure we correctly map answers
-          const correctAnswer = question.correctAnswer;
-
-          if (userAnswer === correctAnswer) {
-              score += 1;
-              points += 5;
-          }
-
-          questionsWithUserAnswers.push({
-              question: question.question,
-              options: question.options,
-              correctAnswer,
-              userAnswer,
-          });
-      });
-
-      console.log("Received user answers:", answers);
 
 
-      // Prepare AI prompt with user answers
-      const aiPrompt = `
-      You are an AI that evaluates quiz responses. Provide feedback in JSON format only. Do not add any explanations outside the JSON.
-      
-      Format:
-      [
-        {
-          "question": "What is X?",
-          "userAnswer": "Option B",
-          "correctAnswer": "Option A",
-          "explanation": "Explanation here..."
-        }
-      ]
-      
-      User's Quiz Responses:
-      ${JSON.stringify(questionsWithUserAnswers)}
-      `;
-      
-
-      // Send to AI for feedback
-      const aiResponse = await openai.chat.completions.create({
-          model: "gpt-4",
-          temperature: 0.3,
-          max_tokens: 1500,
-          messages: [
-              { role: "system", content: "You evaluate quiz results and provide explanations for incorrect answers." },
-              { role: "user", content: aiPrompt },
-          ],
-      });
-
-      // Parse AI response
-      let feedback = [];
-      try {
-          const aiContent = aiResponse?.choices?.[0]?.message?.content;
-          console.log("Raw AI Content:", aiContent); // Debugging
-          feedback = JSON.parse(aiContent);
-      } catch (error) {
-          console.error("AI response parsing failed:", error.message);
-          console.log("Raw AI Response:", aiResponse);
-      }
-
-
-      
-      
-
-      // Update user score in database
-      const userId = req.user._id;
-      let userScore = await UserScore.findOne({ user: userId });
-
-      if (!userScore) {
-          userScore = new UserScore({
-              user: userId,
-              totalPoints: points,
-              level: 1,
-              badges: [],
-          });
-      } else {
-          userScore.totalPoints += points;
-      }
-
-      await userScore.save();
-
-      // Return result
-      res.status(200).json({
-          message: "Quiz submitted successfully",
-          score: `${score}/${quiz.questions.length}`,
-          points: points,  // Include the total points in the response
-          feedback,
-      });
-
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error" });
-  }
-};
-*/
 
 
 
 const submitQuiz = async (req, res) => {
     try {
       const { studyNoteId, quizId } = req.params;
-      const { answers } = req.body; // Answers submitted by the user
+      // Answers submitted by the user
+      const { answers } = req.body; 
   
       // Find the quiz
       const quiz = await Quiz.findById(quizId);
@@ -294,11 +180,11 @@ const submitQuiz = async (req, res) => {
   
       // Calculate score and points
       let score = 0;
-      let points = 0;  // To track points
+      let points = 0; 
       let questionsWithUserAnswers = [];
   
       quiz.questions.forEach((question) => {
-        const userAnswer = answers[question._id]; // Ensure we correctly map answers
+        const userAnswer = answers[question._id];
         const correctAnswer = question.correctAnswer;
   
         if (userAnswer === correctAnswer) {
@@ -367,7 +253,7 @@ const submitQuiz = async (req, res) => {
         return res.status(500).json({ message: "Failed to parse AI response", error: error.message });
       }
   
-      // Begin a transaction to ensure atomicity for quiz score and user score updates
+      // Begin a transaction to ensure quiz score and user score updates
       const session = await mongoose.startSession();
       session.startTransaction();
   
@@ -382,7 +268,7 @@ const submitQuiz = async (req, res) => {
           points: points,
         });
   
-        await quizScore.save({ session }); // Save the quiz score in the transaction
+        await quizScore.save({ session });
 
 
   
@@ -393,14 +279,16 @@ const submitQuiz = async (req, res) => {
           userScore = new UserScore({
             user: userId,
             totalPoints: points,
-            level: 1, // Start at level 1
+            level: 1,
           });
         } else {
-          userScore.totalPoints += points; // Add new points
-          userScore.level = Math.floor(userScore.totalPoints / 50) + 1; // Level up every 50 points
+          // Add new points
+          userScore.totalPoints += points; 
+          // Level up every 50 points
+          userScore.level = Math.floor(userScore.totalPoints / 50) + 1; 
         }
 
-        await userScore.save({ session }); // Save updated score
+        await userScore.save({ session });
 
 
   
@@ -414,7 +302,7 @@ const submitQuiz = async (req, res) => {
         res.status(200).json({
           message: "Quiz submitted successfully",
           score: `${score}/${questionsWithUserAnswers.length}`,
-          points: points,  // Include the total points in the response
+          points: points, 
           feedback,
         });
   
@@ -441,7 +329,7 @@ const getUserTotalPoints = asyncHandler(async (req, res) => {
         const userScore = await UserScore.findOne({ user: userId });
 
         if (!userScore) {
-            return res.status(200).json({ totalPoints: 0, level: 0 });  // Default values
+            return res.status(200).json({ totalPoints: 0, level: 0 }); 
         }
 
         res.status(200).json({ 

@@ -1,4 +1,3 @@
-// constants/quizConstants.js
 export const GENERATE_QUIZ_REQUEST = "GENERATE_QUIZ_REQUEST";
 export const GENERATE_QUIZ_SUCCESS = "GENERATE_QUIZ_SUCCESS";
 export const GENERATE_QUIZ_FAIL = "GENERATE_QUIZ_FAIL";

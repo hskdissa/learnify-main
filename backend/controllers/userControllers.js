@@ -3,6 +3,9 @@ const User = require('../models/userModel');
 const UserScore = require("../models/userScoreModel");
 const generateToken = require('../utils/generateToken');
 
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -53,6 +56,7 @@ const authUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid Email or Password');
   }
 });
+
 
 
 const changeProfile = asyncHandler(async (req, res) => {

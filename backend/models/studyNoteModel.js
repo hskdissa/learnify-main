@@ -8,7 +8,7 @@ const studyNoteSchema = mongoose.Schema(
     },
     aiResponse: {
       type: String,
-      required: true,  // The AI-generated response
+      required: true,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -17,11 +17,11 @@ const studyNoteSchema = mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now,  // Timestamp for when the note was created
+      default: Date.now,
     },
   },
   {
-    timestamps: true,  // Adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 

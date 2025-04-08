@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 
-import  thunk  from "redux-thunk"; // Weird, keeps changing
+import  thunk  from "redux-thunk";
 
 
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -16,9 +16,8 @@ import { flashcardDeleteReducer, flashcardDetailsReducer, flashcardGenerateReduc
 import { quizGenerateReducer, quizListReducer, quizSubmitReducer, quizResultReducer, quizDisplayReducer } from "./reducers/quizReducers";
 
 
-// Combine your reducers
 const rootReducer = combineReducers({
-  // Add reducers here, for example:
+  
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userChange: userChangeReducer,

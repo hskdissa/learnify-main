@@ -7,72 +7,20 @@ import {
   SUBMIT_QUIZ_REQUEST,
   SUBMIT_QUIZ_SUCCESS,
   SUBMIT_QUIZ_FAIL,
-  GET_QUIZ_RESULT_REQUEST,
-  GET_QUIZ_RESULT_SUCCESS,
-  GET_QUIZ_RESULT_FAIL,
   QUIZ_DISPLAY_REQUEST,
   QUIZ_DISPLAY_SUCCESS,
   QUIZ_DISPLAY_FAIL,
 } from "../constants/quizConstants";
 
-const API_URL = import.meta.env.VITE_API_URL; // Adjust this based on your environment
+const API_URL = import.meta.env.VITE_API_URL;
 
-// Helper function for error handling
+
 const handleError = (error, dispatch, failType) => {
   console.error("Error:", error.response?.data || error.message);
   const message = error.response?.data?.message || error.message || "An error occurred";
   dispatch({ type: failType, payload: message });
 };
 
-
-/*
-export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: GENERATE_QUIZ_REQUEST });
-
-    const { userLogin: { userInfo } } = getState();
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    // Get existing quiz data from state (if available)
-    const { quizList } = getState(); 
-    const existingQuiz = quizList.quizzes.find((quiz) => quiz.studyNoteId === studyNoteId);
-
-    if (existingQuiz) {
-      // If quiz already exists for this study note, prevent regeneration
-      console.log("Quiz already exists for this study note.");
-      dispatch({
-        type: GENERATE_QUIZ_FAIL,
-        payload: "A quiz has already been generated for this study note.",
-      });
-      return; // Stop further execution
-    }
-
-    // Proceed with quiz generation if no existing quiz is found
-    const { data } = await axios.post(
-      `${API_URL}/api/quizzes/generate`,
-      { studyNoteId },
-      config
-    );
-
-    console.log("API Response Data:", data);
-
-    dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: data });
-
-  } catch (error) {
-    console.error("Error during quiz generation:", error); // Log the error
-    dispatch({
-      type: GENERATE_QUIZ_FAIL,
-      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
-    });
-  }
-};
-*/
 
 export const generateQuizAction = (studyNoteId) => async (dispatch, getState) => {
   try {
@@ -140,7 +88,7 @@ export const getQuizzesByStudyNoteIdAction = (studyNoteId) => async (dispatch, g
 
     dispatch({
       type: QUIZ_LIST_SUCCESS,
-      payload: data, // Assuming the data is an array of quizzes
+      payload: data, 
     });
   } catch (error) {
     const message =
@@ -192,7 +140,7 @@ export const submitQuizAction = (studyNoteId, quizId, answers) => async (dispatc
   try {
     dispatch({ type: SUBMIT_QUIZ_REQUEST });
 
-    const { userLogin: { userInfo } } = getState(); // Get user info from the store
+    const { userLogin: { userInfo } } = getState();
 
     const config = {
       headers: {
@@ -200,9 +148,8 @@ export const submitQuizAction = (studyNoteId, quizId, answers) => async (dispatc
       },
     };
 
-    // Correct API call with full URL
     const { data } = await axios.post(
-      `${API_URL}/api/quizzes/studynote/${studyNoteId}/quiz/${quizId}/submit`,  // Corrected URL format
+      `${API_URL}/api/quizzes/studynote/${studyNoteId}/quiz/${quizId}/submit`,  
       { answers },
       config
     );
@@ -210,10 +157,10 @@ export const submitQuizAction = (studyNoteId, quizId, answers) => async (dispatc
     // Dispatch success with the response data
     dispatch({
       type: SUBMIT_QUIZ_SUCCESS,
-      payload: data, // Contains score, points, and feedback
+      payload: data,
     });
 
-    return data; // Return data for use in the component (like passing score and feedback to result page)
+    return data;
 
   } catch (error) {
     handleError(error, dispatch, SUBMIT_QUIZ_FAIL);
@@ -221,35 +168,3 @@ export const submitQuizAction = (studyNoteId, quizId, answers) => async (dispatc
 };
 
 
-/*
-// Action to get the result of a quiz after submission
-export const getQuizResultAction = (studyNoteId, quizId) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: GET_QUIZ_RESULT_REQUEST });
-
-    const { userLogin: { userInfo } } = getState(); // Get user info from the store
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    // Fetching the quiz result from the backend
-    const { data } = await axios.get(
-      `${API_URL}/api/quizzes/${studyNoteId}/quiz/${quizId}/result`, // Adjusted API path
-      config
-    );
-
-    // Dispatch success with the result data
-    dispatch({
-      type: GET_QUIZ_RESULT_SUCCESS,
-      payload: data, // Contains the score, feedback, and possibly other quiz result data
-    });
-
-
-  } catch (error) {
-    handleError(error, dispatch, GET_QUIZ_RESULT_FAIL);
-  }
-};
-*/

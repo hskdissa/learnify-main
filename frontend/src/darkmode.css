@@ -1,0 +1,32 @@
+/* Default Light Mode */
+body {
+    background-color: #ffffff;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Dark Mode */
+.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Dark mode styles for Navbar */
+.dark-mode .navbar {
+    background-color: #1e1e1e !important;
+    border-bottom: 1px solid #444;
+}
+
+/* Dark mode styles for Buttons */
+.dark-mode button {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+}
+
+/* Dark mode styles for Inputs */
+.dark-mode input, .dark-mode textarea {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+}

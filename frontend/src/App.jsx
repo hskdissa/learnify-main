@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { DarkModeProvider } from './components/context/DarkModeContext'; 
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import LandingPage from "./screens/LandingPage/LandingPage";
@@ -20,8 +21,10 @@ import QuizConfirmation from "./screens/Quiz/QuizConfirmation";
 import SingleQuiz from './screens/Quiz/SingleQuiz';
 import QuizResult from './screens/Quiz/QuizResult';
 import MyProfileScreen from './screens/MyProfileScreen/MyProfileScreen';
+import "./darkmode.css"; 
 
 const App = () => (
+  <DarkModeProvider>
   <Router>
     <Header />
     <main>
@@ -52,6 +55,7 @@ const App = () => (
     </main>
     <Footer />
   </Router>
+  </DarkModeProvider>
 );
 
 export default App;

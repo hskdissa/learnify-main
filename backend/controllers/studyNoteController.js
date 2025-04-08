@@ -43,45 +43,6 @@ const getStudyNoteById = async (req, res) => {
 
 
 
-/*
-// Delete a study note along with related flashcards
-const deleteStudyNote = async (req, res) => {
-  console.log("User ID from Request:", req.user ? req.user._id : "Undefined");
-
-  const { id } = req.params;
-  const userId = req.user._id;
-
-  try {
-    // Find the study note
-    const studyNote = await StudyNote.findOne({ _id: id, user: userId });
-
-    if (!studyNote) {
-      return res.status(404).json({ message: "Study note not found" });
-    }
-
-    console.log("Study note found, ID:", id);
-
-    // Find flashcards related to the study note
-    const relatedFlashcards = await Flashcard.find({ studyNote: id });
-
-    console.log("Related flashcards found:", relatedFlashcards.length);
-
-    // Delete all flashcards related to this study note
-    await Flashcard.deleteMany({ studyNote: id });
-
-    console.log("Flashcards deleted successfully.");
-
-    // Delete the study note
-    await studyNote.deleteOne();
-
-    res.status(200).json({ message: "Study note and related flashcards deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting study note and flashcards:", error);
-    res.status(500).json({ message: "An error occurred while deleting the study note and flashcards" });
-  }
-};
-*/
-
 // Delete a study note along with related flashcards and quizzes
 const deleteStudyNote = asyncHandler(async (req, res) => {
   console.log("User ID from Request:", req.user ? req.user._id : "Undefined");
@@ -128,6 +89,8 @@ const deleteStudyNote = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "An error occurred while deleting the study note, flashcards, and quizzes" });
   }
 });
+
+
 
 
 module.exports = { getAllStudyNotes, getStudyNoteById, deleteStudyNote };

@@ -1,6 +1,6 @@
 
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');  // No need for destructuring
+const User = require('../models/userModel');
 const asyncHandler = require("express-async-handler");
 
 //protect api from any unauthorised access

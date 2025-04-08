@@ -10,10 +10,13 @@ router.route('/login').post(authUser)
 
 router.post("/my-profile", protect, changeProfile);
 
-// Get user's score and level
-//router.get("/score", protect, getUserScore);
-
 // Add the route for fetching user total points and level
 router.get("/total-points", protect, getUserTotalPoints);
+
+// Forgot password (send email with reset link)
+//router.route('/forgot-password').post(forgotPassword);
+
+// Reset password (with token)
+//router.route('/reset-password/:token').post(resetPassword);
 
 module.exports = router;

@@ -102,29 +102,47 @@ const Dashboard = () => {
                 {loadingStudy && <Loading />}
                 {!loadingStudy && !errorStudy && studyNotes?.length > 0 && (
                     <Row>
-                        {studyNotes.map((studyNote) => (
-                            <Col key={studyNote._id} md={6} lg={4} xl={3} className="mb-4">
-                                <Card className="shadow-lg rounded-3 border-0" style={{ transition: 'transform 0.3s ease', borderRadius: '10px' }} 
-                                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                    <Card.Body>
-                                        <Card.Title className="fw-bold" style={{ fontSize: '20px', color: '#333' }}>{studyNote.title}</Card.Title>
-                                        <div className="border p-2 bg-light rounded">
-                                            <strong>AI Response:</strong> {studyNote.aiResponse?.substring(0, 100)}...
-                                        </div>
-                                        <div className="d-flex justify-content-between mt-3">
-                                            <Link to={`/studynote/${studyNote._id}`}>
-                                                <Button variant="primary" size="sm" style={{ fontSize: '14px', padding: '6px 12px' }}>Study</Button>
-                                            </Link>
-                                            <Button variant="danger" size="sm" onClick={() => deleteHandler(studyNote._id)} style={{ fontSize: '14px', padding: '6px 12px' }}>
-                                                <FaTrash />
+                    {studyNotes.map((studyNote) => (
+                        <Col key={studyNote._id} md={6} lg={4} xl={3} className="mb-4">
+                            <Card className="shadow-lg rounded-4 border-0" 
+                                style={{ 
+                                    transition: 'transform 0.3s ease', 
+                                    borderRadius: '12px', 
+                                    background: 'linear-gradient(to bottom right, #ffffff, #e3f2fd)',
+                                    padding: '1px' 
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                <Card.Body>
+                                    <Card.Title className="fw-bold text-primary" 
+                                                style={{ fontSize: '22px', minHeight: '50px' }}>
+                                        {studyNote.title}
+                                    </Card.Title>
+                                    
+                                    <div className="border p-3 bg-light rounded" 
+                                        style={{ maxHeight: '80px', overflowY: 'auto', fontSize: '14px' }}>
+                                        <strong>Preview:</strong> {studyNote.aiResponse?.substring(0, 100)}...
+                                    </div>
+
+                                    <div className="d-flex justify-content-between mt-4">
+                                        <Link to={`/studynote/${studyNote._id}`}>
+                                            <Button variant="outline-primary" size="sm" 
+                                                    style={{ fontSize: '14px', padding: '8px 16px' }}>
+                                                Study
                                             </Button>
-                                        </div>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        ))}
-                    </Row>
+                                        </Link>
+                                        <Button variant="outline-danger" size="sm" 
+                                                onClick={() => deleteHandler(studyNote._id)} 
+                                                style={{ fontSize: '14px', padding: '8px 16px' }}>
+                                            <FaTrash /> Delete
+                                        </Button>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+
                 )}
             </div>
         </MainScreen>

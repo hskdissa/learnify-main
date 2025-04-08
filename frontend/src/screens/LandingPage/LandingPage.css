@@ -1,52 +1,105 @@
+.landing-page {
+  font-family: 'Arial', sans-serif;
+  scroll-behavior: smooth;
+}
 
-  .main {
-    min-height: 93vh;
-    display: flex;
-    align-items: center;
-    background-image: url("../../background1.jpg");
-    background-position: center;
-    background-size: cover;
-  }
+/* Hero Section */
+.hero-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  text-align: center;
+  transition: opacity 0.8s ease-in-out; /* Smoother transition */
+}
 
-  .title {
-    font-size: 95px;
-  }
-  .subtitle {
-    font-size: 25px;
-    padding-top: 10px;
-  }
-  .intro-text {
-    width: 100%;
-    text-align: center;
-  }
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+}
 
-  .buttonContainer {
-    margin-top: 50px;
-    display: flex;
-    justify-content: space-evenly;
-  }
-  
-  .landingbutton {
-    width: 200px;
-    height: 55px;
-  }
-  
-  @media only screen and (min-width: 1200px) {
-    .buttonContainer {
-      padding: 0 200px;
-    }
-    .title {
-      padding: 0 100px;
-    }
-  }
-  
-  @media only screen and (max-width: 768px) {
-    .title {
-      font-size: 60px;
-    }
-    .landingbutton {
-      width: 150px;
-      height: 50px;
-    }
-  }
-  
+.subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* Feature Sections */
+.features {
+  padding: 80px 0;
+  background-color: #f8f9fa;
+  text-align: center;
+  transition: opacity 0.8s ease-in-out; /* Smoother fading */
+}
+
+.feature {
+  margin-bottom: 60px;
+}
+
+.feature h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Register Today Section */
+.register-section {
+  padding: 60px 0;
+  background-color: #6e8efb;
+  color: white;
+  text-align: center;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.register-section h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.register-section p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.register-section .landingbutton {
+  padding: 12px 40px;
+  font-size: 1.2rem;
+}
+
+/* Reviews Section */
+.reviews {
+  padding: 80px 0;
+  background-color: #fff;
+  text-align: center;
+}
+
+.review-card {
+  margin: 20px 0;
+  border: none;
+  border-radius: 10px;
+  transition: transform 0.3s;
+}
+
+.review-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Button Styles */
+.buttonContainer {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.landingbutton {
+  padding: 10px 30px;
+  font-size: 1.2rem;
+}
+
+.typical-container {
+  display: inline-block;
+  text-align: center; /* Keeps the text properly aligned */
+  margin-top: 10px; /* Adjusts the space between the title and the animated text */
+}
