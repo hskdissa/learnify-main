@@ -1,21 +1,17 @@
 import React, { useEffect } from 'react';
 import MainScreen from '../../components/MainScreen';
 import { Link, useNavigate } from 'react-router-dom';
-import { Accordion, Badge, Button, Card, Row, Col } from 'react-bootstrap';
+import { Button, Card, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { listNotes } from '../../actions/noteActions';
 import { listStudyNotes, deleteStudyNote } from "../../actions/studyNoteAction.jsx";
 import { listFlashcardsAction } from "../../actions/flashcardActions";
-import { FaEdit, FaTrash, FaBook, FaLayerGroup,  } from 'react-icons/fa';
+import { FaBook, FaLayerGroup, FaTrash } from 'react-icons/fa';
 import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage';
 
 const Dashboard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const noteList = useSelector((state) => state.noteList);
-    const { loading, notes, error } = noteList || {};
 
     const studyNoteList = useSelector((state) => state.studyNoteList);
     const { loading: loadingStudy, studyNotes, error: errorStudy } = studyNoteList || {};
@@ -30,7 +26,6 @@ const Dashboard = () => {
         if (!userInfo) {
             navigate("/");
         } else {
-            dispatch(listNotes());
             dispatch(listStudyNotes());
             dispatch(listFlashcardsAction());
         }
@@ -48,47 +43,11 @@ const Dashboard = () => {
                 <Link to="/uploadfile">
                     <Button variant="primary" size="lg">Upload Notes</Button>
                 </Link>
-                <Link to="/createnote">
-                    <Button variant="secondary" size="lg">Add Reminder</Button>
-                </Link>
             </div>
 
-            {error && <ErrorMessage variant='danger'>{error}</ErrorMessage>}
-            {loading && <Loading />} 
-
-            <h3><FaBook /> My Notes</h3>
-            {!loading && !error && notes?.length > 0 && (
-                <Accordion defaultActiveKey="0">
-                    {notes.map((note) => (
-                        <Accordion.Item key={note._id} eventKey={note._id}>
-                            <Card className="shadow-sm rounded mb-3">
-                                <Card.Header className="d-flex justify-content-between align-items-center">
-                                    <Accordion.Button as="div" className="fw-bold">{note.title}</Accordion.Button>
-                                    <div>
-                                        <Link to={`/note/${note._id}`}>
-                                            <Button variant="outline-success" className="me-2">
-                                                <FaEdit />
-                                            </Button>
-                                        </Link>
-                                        <Button variant="outline-danger" onClick={() => deleteHandler(note._id)}>
-                                            <FaTrash />
-                                        </Button>
-                                    </div>
-                                </Card.Header>
-                                <Accordion.Body>
-                                    <Card.Body>
-                                        <h5><Badge bg="success">{note.category}</Badge></h5>
-                                        <p>{note.content}</p>
-                                        <footer className="blockquote-footer">Created On {note.createdAt.substring(0, 10)}</footer>
-                                    </Card.Body>
-                                </Accordion.Body>
-                            </Card>
-                        </Accordion.Item>
-                    ))}
-                </Accordion>
-            )}
-
             <h3><FaBook /> My Study Notes</h3>
+            {errorStudy && <ErrorMessage variant="danger">{errorStudy}</ErrorMessage>}
+            {loadingStudy && <Loading />}
             {!loadingStudy && !errorStudy && studyNotes?.length > 0 && (
                 <Row>
                     {studyNotes.map((studyNote) => (
@@ -115,8 +74,8 @@ const Dashboard = () => {
             )}
 
             <h3><FaLayerGroup /> My Flashcards</h3>
-            {loadingFlashcards && <Loading />}
             {errorFlashcards && <ErrorMessage variant="danger">{errorFlashcards}</ErrorMessage>}
+            {loadingFlashcards && <Loading />}
             {!loadingFlashcards && !errorFlashcards && flashcards?.length > 0 && (
                 <Row>
                     {flashcards.map((flashcard) => (

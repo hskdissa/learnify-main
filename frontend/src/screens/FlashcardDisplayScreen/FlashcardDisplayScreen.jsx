@@ -23,15 +23,15 @@ const FlashcardDisplayScreen = () => {
 
   // Delete Handler (integrate actual delete logic here)
   const deleteHandler = (flashcardId) => {
-    // Logic to delete flashcard
     console.log(`Deleting flashcard with ID: ${flashcardId}`);
   };
 
   return (
-    <MainScreen title={`Flashcards for Study Note ${studyNoteId}`}>
-      <Container style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
-      <Button 
-          onClick={() => navigate(`/studynote/${studyNoteId}`)} // Navigate to the SingleStudyNote page
+    <MainScreen title={`Flashcards for Study Note`}>
+      <Container style={{ maxWidth: "900px", padding: "20px" }}>
+        
+        <Button 
+          onClick={() => navigate(`/studynote/${studyNoteId}`)} 
           variant="secondary" 
           className="mb-4"
         >
@@ -42,71 +42,40 @@ const FlashcardDisplayScreen = () => {
           <Loading />
         ) : error ? (
           <ErrorMessage variant="danger">{error}</ErrorMessage>
-        ) : (
-          flashcards && flashcards.length > 0 && (
-            <div>
-              <h3>Flashcards for Study Note: {studyNoteId}</h3>
+        ) : flashcards && flashcards.length > 0 ? (
+          <div>
+            <h3 className="mb-3">Available Flashcard Sets</h3>
 
-              <Accordion defaultActiveKey="0">
-                {/* Loop through each flashcard set */}
-                {[...flashcards].reverse().map((flashcardSet) => (
-                  <Accordion.Item key={flashcardSet._id} eventKey={flashcardSet._id}>
-                    <Card style={{ margin: 10 }}>
-                      <Card.Header style={{ display: "flex" }}>
-                        <span
-                          style={{
-                            color: "black",
-                            textDecoration: "none",
-                            flex: 1,
-                            cursor: "pointer",
-                            alignSelf: "center",
-                            fontSize: 18,
-                          }}
-                        >
-                          <Accordion.Button as="div">{flashcardSet.title}</Accordion.Button>
-                        </span>
-                        <div>
+            <Accordion defaultActiveKey="0">
+              {[...flashcards].reverse().map((flashcardSet) => (
+                <Accordion.Item key={flashcardSet._id} eventKey={flashcardSet._id}>
+                  <Card className="shadow-sm border-0 mb-3">
+                    <Card.Header className="d-flex justify-content-between align-items-center bg-light">
+                      <div className="fw-bold">{flashcardSet.title}</div>
 
+                      <div>
                         <Link to={`/studynote/${studyNoteId}/flashcards/${flashcardSet._id}`}>
-                          <Button>View</Button>
+                          <Button variant="primary" className="me-2">View</Button>
                         </Link>
-
-
-
-                          {/* Delete Button */}
-                          <Button
-                            variant="danger"
-                            className="mx-2"
-                            onClick={() => deleteHandler(flashcardSet._id)}
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      </Card.Header>
-
-                      <Accordion.Body>
-                        <Card.Body>
-                          {/* Display flashcards inside the set */}
-                          <h4>
-                            <Badge bg="success">Category - {flashcardSet.category}</Badge>
-                          </h4>
-
-                          {flashcardSet.flashcards.map((flashcard) => (
-                          <div key={flashcard._id} className="mb-3">
-                            <strong>Q:</strong> {flashcard.question} <br />
-                            <strong>A:</strong> {flashcard.answer}
-
-                          </div>
-                        ))}
-
-                        </Card.Body>
-                      </Accordion.Body>
-                    </Card>
-                  </Accordion.Item>
-                ))}
-              </Accordion>
-            </div>
-          )
+                        <Button 
+                          variant="danger" 
+                          onClick={() => deleteHandler(flashcardSet._id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </Card.Header>
+                    
+                    <Accordion.Body>
+                      <Badge bg="success" className="mb-2">Category: {flashcardSet.category}</Badge>
+                    </Accordion.Body>
+                  </Card>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+          </div>
+        ) : (
+          <p className="text-muted text-center">No flashcards available.</p>
         )}
       </Container>
     </MainScreen>

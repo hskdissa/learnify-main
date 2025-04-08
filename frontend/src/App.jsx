@@ -1,35 +1,24 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from "./components/Header/Header"; // Import Header
-import Footer from "./components/Footer/Footer"; // Import Footer
+import Header from "./components/Header/Header";
+import Footer from "./components/Footer/Footer";
 import LandingPage from "./screens/LandingPage/LandingPage";
 import Dashboard from "./screens/Dashboard/Dashboard";
 import UploadFile from "./screens/UploadFile/UploadFile";
 import SigninScreen from './screens/SigninScreen/SigninScreen';
 import SignupScreen from './screens/SignupScreen/SignupScreen';
-import CreateNote from './screens/CreateNote/CreateNote';
-import UpdateNote from './screens/UpdateNote/UpdateNote';
+
 import SingleStudyNote from "./screens/SingleStudyNote/SingleStudyNote";
 import FlashcardDisplay from "./screens/FlashcardDisplay/FlashcardDisplay";
 import FlashcardDisplayScreen from "./screens/FlashcardDisplayScreen/FlashcardDisplayScreen";
 import FlashcardDetailScreen from './screens/FlashcardDetailScreen/FlashcardDetailScreen';
 
-import QuizGenerate from "./screens/Quiz/QuizGenerate"; // Path for QuizGenerate page
-import QuizDisplay from "./screens/Quiz/QuizDisplay"; // Path for QuizDisplay page
+import QuizGenerate from "./screens/Quiz/QuizGenerate"; 
+import QuizDisplay from "./screens/Quiz/QuizDisplay"; 
 
-import QuizConfirmation from "./screens/Quiz/QuizConfirmation"; // Import the confirmation page
+import QuizConfirmation from "./screens/Quiz/QuizConfirmation"; 
 import SingleQuiz from './screens/Quiz/SingleQuiz';
 import QuizResult from './screens/Quiz/QuizResult';
 import MyProfileScreen from './screens/MyProfileScreen/MyProfileScreen';
-
-
-
-
-
-
-
-
-console.log("API URL:", import.meta.env.VITE_API_URL);
-
 
 const App = () => (
   <Router>
@@ -40,8 +29,7 @@ const App = () => (
         <Route path="/login" element={<SigninScreen />} />
         <Route path="/my-profile" element={<MyProfileScreen />} />
         <Route path="/register" element={<SignupScreen />} />
-        <Route path="/createnote" element={<CreateNote />} />
-        <Route path="/note/:id" element={<UpdateNote />} />
+
 
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/uploadfile" element={<UploadFile />} />
@@ -50,22 +38,12 @@ const App = () => (
         <Route path="/quizzes/generate" element={<QuizConfirmation />} /> 
         <Route path="/quiz/generate" element={<QuizGenerate />} />
         <Route path="/quizzes/:studyNoteId" element={<QuizDisplay />} />
-
         <Route path="/quizzes/studynote/:studyNoteId/quiz/:quizId" element={<SingleQuiz />} />
-
         <Route path="/quizzes/studynote/:studyNoteId/quiz/:quizId/submit" element={<QuizResult />} />
-
-
-        
-
-
         
         <Route path="/flashcards/generate" element={<FlashcardDisplay />} />
-
         <Route path="/studynote/:id/flashcards" element={<FlashcardDisplayScreen />} />
         <Route path="/studynote/:id/flashcards/:flashcardId" element={<FlashcardDetailScreen />} />
-
-
 
 
       </Routes>
